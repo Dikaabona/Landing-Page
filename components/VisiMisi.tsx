@@ -32,7 +32,7 @@ const VisiMisi: React.FC = () => {
               </h2>
               <div className="p-8 bg-slate-800/50 rounded-3xl border border-slate-700">
                 <p className="text-xl text-slate-300 italic">
-                  "Menjadi digital growth partner terpercaya bagi brand Indonesia dalam mengoptimalkan potensi penjualan melalui platform digital."
+                  "Menjadi partner strategis brand dalam memenangkan pertumbuhan di era digital dan live commerce."
                 </p>
               </div>
             </div>

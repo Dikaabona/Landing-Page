@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Facebook, Instagram, Twitter, Linkedin, Youtube } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -21,38 +20,39 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-slate-900 text-white pt-20 pb-10">
+    <footer className="bg-[#0f172a] text-white pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="col-span-1 lg:col-span-1">
-            <div className="flex items-center mb-6">
-              <div className="flex items-center">
-                <span className="text-xl font-black tracking-tighter text-yellow-500">VISIBEL</span>
-                <span className="text-xl font-black tracking-tighter text-white ml-1">AGENCY</span>
+        {/* Updated grid to 3 columns to account for removed subscription section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16 mb-20">
+          {/* Logo and Description Column */}
+          <div className="flex flex-col items-start">
+            <div className="mb-8">
+              <div className="flex items-center bg-transparent">
+                <img 
+                  src="https://lh3.googleusercontent.com/d/1aGXJp0RwVbXlCNxqL_tAfHS5dc23h7nA" 
+                  alt="Visibel Agency Logo" 
+                  className="h-20 w-auto object-contain brightness-0 invert"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    const parent = target.parentElement;
+                    if (parent) {
+                      target.style.display = 'none';
+                      parent.innerHTML = '<span class="text-4xl font-black tracking-tighter text-yellow-500 uppercase">VISIBEL</span><span class="text-4xl font-black tracking-tighter text-white ml-1 uppercase">AGENCY</span>';
+                    }
+                  }}
+                />
               </div>
             </div>
-            <p className="text-slate-400 mb-8 leading-relaxed font-medium">
+            <p className="text-slate-400 text-sm md:text-base mb-8 leading-relaxed font-medium max-w-sm">
               Partner pertumbuhan digital terpercaya yang fokus membantu brand memaksimalkan potensi penjualan melalui platform digital.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-yellow-500 transition-colors">
-                <Instagram size={20} />
-              </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-yellow-500 transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-yellow-500 transition-colors">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-yellow-500 transition-colors">
-                <Youtube size={20} />
-              </a>
-            </div>
+            {/* Social icons removed as per requested "hapus" marker */}
           </div>
           
+          {/* Layanan Column */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Layanan</h4>
-            <ul className="space-y-4 text-slate-400">
+            <h4 className="text-xl font-bold mb-8 text-white">Layanan</h4>
+            <ul className="space-y-5 text-slate-400 font-medium">
               <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Live Streaming Management</a></li>
               <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Short Video Production</a></li>
               <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Social Media Management</a></li>
@@ -60,9 +60,10 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           
+          {/* Navigasi Column */}
           <div>
-            <h4 className="text-lg font-bold mb-6">Navigasi</h4>
-            <ul className="space-y-4 text-slate-400">
+            <h4 className="text-xl font-bold mb-8 text-white">Navigasi</h4>
+            <ul className="space-y-5 text-slate-400 font-medium">
               <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Layanan Kami</a></li>
               <li><a href="#why-us" onClick={(e) => handleScroll(e, 'why-us')} className="hover:text-yellow-500 transition-colors">Kenapa Visibel?</a></li>
               <li><a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="hover:text-yellow-500 transition-colors">Hubungi Kami</a></li>
@@ -70,25 +71,13 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           
-          <div>
-            <h4 className="text-lg font-bold mb-6">Berlangganan</h4>
-            <p className="text-slate-400 mb-4 text-sm font-medium">Dapatkan update strategi digital marketing terbaru setiap minggu.</p>
-            <form className="flex" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="Email Anda" 
-                className="bg-slate-800 border-none rounded-l-xl px-4 py-3 text-sm focus:ring-0 w-full"
-              />
-              <button className="bg-yellow-500 px-4 py-3 text-slate-900 rounded-r-xl font-bold hover:bg-yellow-600 transition-all">
-                Join
-              </button>
-            </form>
-          </div>
+          {/* Subscription Column removed as per requested "hapus" marker */}
         </div>
         
-        <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
-          <p>© 2026 Visibel Agency. All rights reserved.</p>
-          <div className="flex space-x-8 mt-4 md:mt-0">
+        {/* Copyright Section */}
+        <div className="border-t border-slate-800 pt-10 flex flex-col md:flex-row justify-between items-center text-slate-500 text-sm">
+          <p className="mb-4 md:mb-0">© 2026 Visibel Agency. All rights reserved.</p>
+          <div className="flex space-x-8">
             <a href="#" className="hover:text-white transition-colors">Kebijakan Privasi</a>
             <a href="#" className="hover:text-white transition-colors">Syarat & Ketentuan</a>
           </div>

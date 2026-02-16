@@ -12,7 +12,8 @@ interface ServiceCardProps {
 const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, features, icon }) => (
   <div className="bg-white p-6 sm:p-8 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl transition-all hover:-translate-y-2 group flex flex-col h-full text-left">
     <div className="w-12 h-12 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-yellow-500 group-hover:text-slate-900 transition-colors">
-      {React.cloneElement(icon as React.ReactElement, { size: 24 })}
+      {/* Fix: Specify expected props for cloneElement to avoid "No overload matches this call" error */}
+      {React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 24 })}
     </div>
     <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-3">{title}</h3>
     <p className="text-slate-500 mb-4 text-sm leading-relaxed">
@@ -66,7 +67,7 @@ const Services: React.FC = () => {
           <ServiceCard 
             icon={<Share2 />}
             title="Social Media Management"
-            description="Jaga kehadiran brand Anda tetap aktif dan profesional setiap hari."
+            description="Jaga kehadiran brand Anda tetap aktif and profesional setiap hari."
             features={[
               "Perencanaan konten bulanan",
               "Posting & optimasi",

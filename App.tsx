@@ -1,14 +1,14 @@
-
 import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import AdsPerformance from './components/AdsPerformance';
 import Services from './components/Services';
 import Clients from './components/Clients';
 import Features from './components/Features';
 import PriceList from './components/PriceList';
 import LivestreamSetup from './components/LivestreamSetup';
+import ShortVideos from './components/ShortVideos';
 import VisiMisi from './components/VisiMisi';
-import CTA from './components/CTA';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
@@ -18,13 +18,16 @@ const App: React.FC = () => {
       <Navbar />
       <main>
         <Hero />
-        <Services />
+        <AdsPerformance />
+        {/* Stats component removed per user request (hapus) */}
         <PriceList />
         <LivestreamSetup />
+        <ShortVideos />
         <Features />
         <Clients />
         <VisiMisi />
-        <CTA />
+        {/* Services diletakkan di bawah sesuai feedback layout visual */}
+        <Services />
         <Contact />
       </main>
       <Footer />
