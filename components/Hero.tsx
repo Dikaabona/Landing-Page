@@ -4,11 +4,12 @@ import React from 'react';
 const Hero: React.FC = () => {
   const partnerLogos = [
     { id: '1_CiIIdbumTS3cKcPwjWX7DFmrq7w0NXA', name: 'TikTok Shop Partner' },
-    { id: '1BwBvKarXHrO3y1G34q4EMsSgNlsRqTSC', name: 'TikTok Marketing Partner' }
+    { id: '1BwBvKarXHrO3y1G34q4EMsSgNlsRqTSC', name: 'TikTok Marketing Partner' },
+    { id: '1KGiEEmKt0M28RWs5Y08RZfxH0US-azUX', name: 'Shopee Partner' }
   ];
 
   return (
-    <section className="relative pt-36 pb-24 lg:pt-44 overflow-hidden bg-white">
+    <section className="relative pt-36 pb-12 lg:pt-44 overflow-hidden bg-white">
       {/* Elegant Background Decor */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[60%] bg-yellow-50/60 blur-[120px] rounded-full"></div>
@@ -32,7 +33,7 @@ const Hero: React.FC = () => {
           {/* Platform Partners Section restored here */}
           <div className="max-w-4xl mx-auto mt-12">
             <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 mb-8">Official & Trusted Platform Partners</p>
-            <div className="flex items-center justify-center gap-10 sm:gap-16">
+            <div className="flex flex-wrap items-center justify-center gap-10 sm:gap-16">
               {/* TikTok Shop Partner */}
               <div className="h-10 sm:h-12 flex items-center justify-center transition-all duration-300 grayscale opacity-60 hover:grayscale-0 hover:opacity-100">
                 <img 
@@ -41,11 +42,19 @@ const Hero: React.FC = () => {
                   className="h-full w-auto object-contain"
                 />
               </div>
-              {/* TikTok Marketing Partner - Restored to size 150px width */}
+              {/* TikTok Marketing Partner */}
               <div className="flex items-center justify-center transition-all duration-300 grayscale opacity-60 hover:grayscale-0 hover:opacity-100">
                 <img 
                   src={`https://lh3.googleusercontent.com/d/${partnerLogos[1].id}`} 
                   alt={partnerLogos[1].name} 
+                  className="w-[120px] sm:w-[150px] h-auto object-contain"
+                />
+              </div>
+              {/* Shopee Partner - Added as requested with size 150px */}
+              <div className="flex items-center justify-center transition-all duration-300 grayscale opacity-60 hover:grayscale-0 hover:opacity-100">
+                <img 
+                  src={`https://lh3.googleusercontent.com/d/${partnerLogos[2].id}`} 
+                  alt={partnerLogos[2].name} 
                   className="w-[120px] sm:w-[150px] h-auto object-contain"
                 />
               </div>

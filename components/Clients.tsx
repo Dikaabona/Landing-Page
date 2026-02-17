@@ -12,6 +12,10 @@ const Clients: React.FC = () => {
     { name: 'Li-Ning', id: '1ePzH0cjpkSDLeazqCSn4d54KFzb6LILj' },
     { name: 'Adev', id: '1mNWj_zH4OPzWhZamuVWdhybMqVZTlqUg' },
     { name: 'FITS', id: '1KzZlte6-j-Cw4Hi7dwUbUltj0hPT0px8' },
+    { name: 'Client 10', id: '1b-hkPOsHZ8_rW1f9aqABu7R5bw_ZJM0y' },
+    { name: 'Client 11', id: '19dIIjxNubnzjarpLdDLJ0aL-Gunpvwoz' },
+    { name: 'Client 12', id: '1WnGsnaYf9dA1IyWdXmHou2incuIQ6moB' },
+    { name: 'Client 13', id: '1TcGh373N4MNFcX7qTDMCHvgpfTlVF6j3' },
   ];
 
   // Double the logos for a seamless loop
@@ -43,7 +47,7 @@ const Clients: React.FC = () => {
               <img 
                 src={`https://lh3.googleusercontent.com/d/${logo.id}`} 
                 alt={logo.name} 
-                className="h-12 md:h-16 w-auto object-contain"
+                className="h-[50px] w-auto object-contain"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}

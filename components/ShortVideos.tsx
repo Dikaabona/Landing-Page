@@ -5,10 +5,14 @@ const ShortVideos: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // ID video dari Google Drive termasuk video baru yang diminta
+  // ID video dari Google Drive termasuk video-video baru yang diminta
   const videos = [
     '1uUn6ZyMcnwv6zMcVqXJGNGKc44mnva2U',
-    '1Rb1BIybtLt01hy8KFuT_EaiH_CQszYpP', // Video baru
+    '1Rb1BIybtLt01hy8KFuT_EaiH_CQszYpP',
+    '10Hh14zuq0mBzbQGr28ETHBBzCxbh5nQy', // Video baru 1
+    '1k3nKvJYONidCJMBSHe7RTh4x6wTNQgp6', // Video baru 2
+    '1zTCh97o7gPxNvUOWDyBrDbqtZZ5Uu7aL', // Video baru 3
+    '1DlmMqCh_dDEMAmoPehuEf7Q8Om3N8-1z', // Video baru 4
     '1qhlOmr2CCy4CbrKLyOHmc4iYVZrvLIRp',
     '1RQ0ViiCyO-DDPMnyHvAn1TvEfKjB7b7L'
   ];
@@ -87,7 +91,7 @@ const ShortVideos: React.FC = () => {
           </div>
 
           {/* Navigation Dots */}
-          <div className="flex justify-center space-x-2 mt-12">
+          <div className="flex justify-center flex-wrap gap-2 mt-12 px-4">
             {videos.map((_, idx) => (
               <button
                 key={idx}
@@ -99,12 +103,6 @@ const ShortVideos: React.FC = () => {
               />
             ))}
           </div>
-        </div>
-        
-        <div className="mt-12 text-center">
-          <p className="text-slate-400 text-sm italic">
-            *Video dihosting di Google Drive. Klik tombol play pada video untuk memulai. Geser untuk melihat lainnya.
-          </p>
         </div>
       </div>
     </section>

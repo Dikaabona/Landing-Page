@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -19,15 +20,14 @@ const App: React.FC = () => {
       <main>
         <Hero />
         <AdsPerformance />
-        {/* Stats component removed per user request (hapus) */}
+        {/* Services moved here based on user feedback to be above PriceList */}
+        <Services />
         <PriceList />
         <LivestreamSetup />
         <ShortVideos />
         <Features />
         <Clients />
         <VisiMisi />
-        {/* Services diletakkan di bawah sesuai feedback layout visual */}
-        <Services />
         <Contact />
       </main>
       <Footer />
