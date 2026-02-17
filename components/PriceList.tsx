@@ -7,40 +7,52 @@ const PriceList: React.FC = () => {
 
   const plans = [
     {
-      name: "Essential Package",
-      price: "Starter",
-      amount: "8.400.000",
-      desc: "Ideal untuk UMKM yang baru ingin merambah ke dunia digital marketing.",
+      price: "LiveStream",
+      amount: "9.000.000",
       features: [
-        "60 jam live streaming / bulan",
-        "15 short video",
-        "Monthly Performance Report",
-        "Optimasi Profil Akun"
+        "100 jam live streaming / bulan",
+        "Min Subscribe 3 bulan",
+        "No Commission Fee",
+        "Free Setup Live room",
+        "Free Sticker",
+        "Monthly Performance Report"
+      ],
+      recommended: true 
+    },
+    {
+      price: "ShortVideo",
+      amount: "6.000.000",
+      features: [
+        "30 short video / bulan",
+        "Script Video",
+        "Content Plan",
+        "No Commission Fee",
+        "Talent",
+        "Monthly Report",
+        "Min Subscribe 3 bulan"
+      ],
+      recommended: true 
+    },
+    {
+      price: "Affiliate Management Service",
+      amount: "5.000.000",
+      features: [
+        "30 KOL",
+        "Script Content",
+        "Monthly Report",
+        "KOL sesuai niche"
       ],
       recommended: false
     },
     {
-      name: "Growth Strategy",
-      price: "Best Value",
-      amount: "15.000.000",
-      desc: "Paket lengkap untuk brand yang siap scale-up revenue secara signifikan.",
+      price: "Ads Management",
+      amount: "2.500.000",
       features: [
-        "100 jam live streaming / bulan",
-        "30 short video",
-        "Dedicated Account Manager",
-        "Prioritas Talent Host"
-      ],
-      recommended: true
-    },
-    {
-      name: "Elite Enterprise",
-      price: "Full Custom",
-      desc: "Solusi premium yang disesuaikan khusus untuk korporasi dan brand besar.",
-      features: [
-        "Full Management",
-        "Premium Production",
-        "Enterprise Reporting",
-        "24/7 Support"
+        "Min Subscribe 3 bulan",
+        "Komisi 5%, komisi maksimal Rp 10.000.000 / bulan",
+        "Manage Shop Tab",
+        "Weekly Report",
+        "Account Manager"
       ],
       recommended: false
     }
@@ -54,41 +66,40 @@ const PriceList: React.FC = () => {
           <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">Investasikan Pertumbuhan Brand Anda</h3>
         </div>
 
-        {/* Updated grid: grid-cols-2 for mobile to make them "sejajar" */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8 items-stretch">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 items-stretch">
           {plans.map((plan, i) => (
             <div 
               key={i} 
-              className={`relative bg-white rounded-[24px] sm:rounded-[40px] p-5 sm:p-10 border flex flex-col h-full transition-all duration-300 hover:shadow-2xl ${
+              className={`relative bg-white rounded-[24px] sm:rounded-[40px] px-5 pb-5 pt-6 sm:px-8 sm:pb-8 sm:pt-10 border flex flex-col h-full transition-all duration-500 ease-out hover:-translate-y-4 hover:scale-[1.02] ${
                 plan.recommended 
-                  ? 'border-yellow-500 ring-4 ring-yellow-500/10 z-10' 
-                  : 'border-slate-100 shadow-sm'
+                  ? 'border-yellow-500 ring-4 ring-yellow-500/10 z-10 shadow-2xl shadow-yellow-500/20' 
+                  : 'border-slate-100 shadow-sm hover:border-yellow-400 hover:shadow-xl'
               }`}
             >
               {plan.recommended && (
-                <div className="absolute -top-3 sm:-top-5 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-900 px-3 py-1.5 sm:px-6 sm:py-2 rounded-full font-black text-[8px] sm:text-sm uppercase tracking-wider shadow-lg whitespace-nowrap">
-                  Paling Direkomendasikan
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-900 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest whitespace-nowrap z-20 shadow-md">
+                  Best Seller
                 </div>
               )}
-              
-              <div className="mb-6 sm:mb-8">
-                <h4 className="text-sm sm:text-2xl font-extrabold text-slate-900 mb-1 sm:mb-2 leading-tight">{plan.name}</h4>
-                <p className="text-slate-500 text-[10px] sm:text-sm leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">{plan.desc}</p>
-              </div>
 
               <div className="mb-6 sm:mb-8 flex flex-col">
-                <span className="text-lg sm:text-4xl font-black text-slate-900 leading-none">{plan.price}</span>
+                <span className={`font-[1000] text-slate-900 leading-tight tracking-tighter mb-1 ${
+                  plan.price.length > 15 ? 'text-sm sm:text-xl' : 'text-xl sm:text-3xl'
+                }`}>
+                  {plan.price}
+                </span>
                 {plan.amount && (
-                  <span className="text-base sm:text-2xl font-bold text-slate-600 mt-1 sm:mt-2">Rp {plan.amount}</span>
+                  <span className="font-black text-slate-600 text-base sm:text-xl">
+                    Rp {plan.amount}
+                  </span>
                 )}
               </div>
 
-              <ul className="space-y-2 sm:space-y-4 mb-6 sm:mb-10 flex-grow">
+              <ul className="space-y-3 sm:space-y-4 mb-8 sm:mb-10 flex-grow">
                 {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start text-slate-700 font-semibold text-[9px] sm:text-sm leading-tight">
-                    <div className="mt-0.5 mr-1.5 sm:mr-3 w-3.5 h-3.5 sm:w-5 sm:h-5 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Check size={8} strokeWidth={4} className="sm:hidden" />
-                      <Check size={12} strokeWidth={4} className="hidden sm:block" />
+                  <li key={idx} className="flex items-start text-slate-700 font-bold text-[10px] sm:text-sm leading-tight">
+                    <div className="mt-0.5 mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check size={10} strokeWidth={4} />
                     </div>
                     {feature}
                   </li>
@@ -97,16 +108,16 @@ const PriceList: React.FC = () => {
 
               <div className="mt-auto">
                 <a 
-                  href={`${waUrl}?text=${encodeURIComponent(`Halo Visibel Agency, saya tertarik untuk memilih paket: ${plan.name}`)}`}
+                  href={`${waUrl}?text=${encodeURIComponent(`Halo Visibel Agency, saya tertarik untuk memilih paket: ${plan.price}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`w-full py-3 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-center block transition-all text-xs sm:text-lg shadow-lg ${
+                  className={`w-full py-3 sm:py-5 rounded-xl sm:rounded-2xl font-[900] text-center block transition-all text-[10px] sm:text-sm shadow-lg uppercase tracking-wider ${
                     plan.recommended 
-                      ? 'bg-yellow-500 text-slate-900 hover:bg-yellow-600 shadow-yellow-500/20' 
-                      : 'bg-[#0f172a] text-white hover:bg-black shadow-slate-200/50'
+                      ? 'bg-yellow-500 text-slate-900 hover:bg-yellow-600 shadow-yellow-500/20 active:scale-95' 
+                      : 'bg-[#0f172a] text-white hover:bg-black shadow-slate-200/50 active:scale-95'
                   }`}
                 >
-                  Pilih Paket
+                  PILIH PAKET
                 </a>
               </div>
             </div>

@@ -5,10 +5,10 @@ const LivestreamSetup: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Real IDs provided previously
+  // Using the requested image IDs for consistent visuals
   const setupImages = [
-    { id: '18c9eceVg0bgjvintC6laZOuKyFc6oQW0' },
-    { id: '1AostlkxLec_Z9sKjIN3uhDru4vbDh0LN' },
+    { id: '1Mj1ijREs3PV8aUNuzKzFYjIfa9B_q6wh' }, // Pink Blazer
+    { id: '1YrjB2O0Y3yAXh9kXIF7wioptSZvdTEq9' }, // Brown Hijab
     { id: '1iR1-BtcsL4M_CtomlsPxFp5rGqk4Q921' },
     { id: '10Jboa7CN-hz3OeRCDAEFD1nipI7CCXEb' },
     { id: '1Ccnm0AOCu1s-4FfhmReuhY8nJXwLiGrU' },
@@ -19,71 +19,78 @@ const LivestreamSetup: React.FC = () => {
   const handleScroll = () => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth } = scrollRef.current;
-      const itemWidth = scrollRef.current.firstElementChild?.clientWidth || clientWidth;
-      const index = Math.round(scrollLeft / itemWidth);
-      setActiveIndex(index);
+      // For responsiveness, we calculate based on the first item width
+      const firstItem = scrollRef.current.firstElementChild as HTMLElement;
+      if (firstItem) {
+        const itemWidth = firstItem.offsetWidth;
+        const index = Math.round(scrollLeft / itemWidth);
+        setActiveIndex(index);
+      }
     }
   };
 
   const scrollTo = (index: number) => {
     if (scrollRef.current) {
-      const itemWidth = scrollRef.current.firstElementChild?.clientWidth || scrollRef.current.clientWidth;
-      scrollRef.current.scrollTo({
-        left: index * itemWidth,
-        behavior: 'smooth'
-      });
+      const firstItem = scrollRef.current.firstElementChild as HTMLElement;
+      if (firstItem) {
+        const itemWidth = firstItem.offsetWidth;
+        scrollRef.current.scrollTo({
+          left: index * itemWidth,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
   return (
-    <section id="setup" className="py-24 bg-[#f9f9f9] scroll-mt-20">
+    <section id="setup" className="py-24 bg-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          {/* Label removed as per 'hapus' instruction */}
-          <h3 className="text-4xl sm:text-7xl font-[900] text-slate-900 leading-tight mb-8">Our Livestream Setup</h3>
-          <p className="text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed">
+          <h3 className="text-4xl sm:text-6xl font-[900] text-slate-900 leading-tight mb-8">Our Livestream Setup</h3>
+          <p className="text-lg sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed">
             Perangkat live streaming profesional dengan host berpengalaman dan komunikatif. Semua harga sudah termasuk host, operator, dan full setup tanpa biaya tambahan
           </p>
         </div>
 
-        {/* Slider Container */}
+        {/* Clean Container (Removed dashed borders as requested) */}
         <div className="relative">
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0"
+            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {setupImages.map((img, idx) => (
               <div 
                 key={idx} 
-                className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 snap-start px-2"
+                className="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 snap-start px-2 sm:px-4"
               >
-                {/* Added rounded-3xl as per 'setiap sisi dibuat rounded' instruction */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-white shadow-sm rounded-[32px]">
+                <div className="relative aspect-[9/16] overflow-hidden bg-slate-50 shadow-lg rounded-[32px] border border-slate-100 group">
                   <img 
                     src={`https://lh3.googleusercontent.com/d/${img.id}`} 
-                    alt={`Setup ${idx + 1}`}
+                    alt={`Livestream Preview ${idx + 1}`}
                     loading="lazy"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     onError={(e) => {
                       const target = e.currentTarget;
                       target.src = 'https://images.unsplash.com/photo-1598550476439-6847785fce66?auto=format&fit=crop&q=80&w=800';
                     }}
                   />
+                  {/* Subtle overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Navigation Dots */}
-          <div className="flex justify-center space-x-2 mt-12">
+          <div className="flex justify-center space-x-3 mt-12">
             {setupImages.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => scrollTo(idx)}
-                className={`h-1.5 transition-all duration-300 rounded-full ${
-                  activeIndex === idx ? 'w-8 bg-yellow-500' : 'w-1.5 bg-slate-300'
+                className={`h-2 transition-all duration-300 rounded-full ${
+                  activeIndex === idx ? 'w-10 bg-yellow-500' : 'w-2 bg-slate-200 hover:bg-slate-300'
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
