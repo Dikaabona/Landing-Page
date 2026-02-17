@@ -10,19 +10,25 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, features, icon }) => (
-  <div className="bg-white p-6 sm:p-8 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl transition-all hover:-translate-y-2 group flex flex-col h-full text-left">
-    <div className="w-12 h-12 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-yellow-500 group-hover:text-slate-900 transition-colors">
-      {/* Fix: Specify expected props for cloneElement to avoid "No overload matches this call" error */}
-      {React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 24 })}
+  <div className="bg-white p-4 sm:p-8 rounded-[20px] sm:rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl transition-all hover:-translate-y-2 group flex flex-col h-full text-left">
+    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-yellow-50 text-yellow-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:bg-yellow-500 group-hover:text-slate-900 transition-colors">
+      {/* Responsive icon size */}
+      <div className="sm:hidden">
+        {React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 18 })}
+      </div>
+      <div className="hidden sm:block">
+        {React.cloneElement(icon as React.ReactElement<{ size?: number }>, { size: 24 })}
+      </div>
     </div>
-    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-3">{title}</h3>
-    <p className="text-slate-500 mb-4 text-sm leading-relaxed">
+    <h3 className="text-[13px] sm:text-2xl font-extrabold text-slate-900 mb-2 sm:mb-3 leading-tight tracking-tight">{title}</h3>
+    <p className="text-slate-500 mb-4 text-[10px] sm:text-sm leading-relaxed">
       {description}
     </p>
-    <ul className="space-y-3 mt-1">
+    <ul className="space-y-2 sm:space-y-3 mt-auto">
       {features.map((feature, idx) => (
-        <li key={idx} className="flex items-start text-slate-700 font-semibold text-xs leading-tight">
-          <CheckCircle2 className="text-yellow-500 mr-2 flex-shrink-0 mt-0.5" size={14} />
+        <li key={idx} className="flex items-start text-slate-700 font-semibold text-[9px] sm:text-xs leading-tight">
+          <CheckCircle2 className="text-yellow-500 mr-1.5 sm:mr-2 flex-shrink-0 mt-0.5" size={10} />
+          <CheckCircle2 className="hidden sm:block text-yellow-500 mr-2 flex-shrink-0 mt-0.5" size={14} />
           {feature}
         </li>
       ))}
@@ -36,13 +42,14 @@ const Services: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto mb-16">
           <h2 className="text-yellow-500 font-bold tracking-widest uppercase text-sm mb-4">LAYANAN UNGGULAN KAMI</h2>
-          <h3 className="text-4xl sm:text-5xl font-[900] text-slate-900 mb-8 leading-tight px-4">Solusi All-in-One Untuk Pertumbuhan Digital Anda</h3>
-          <p className="text-xl text-slate-500 leading-relaxed max-w-3xl mx-auto">
+          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 mb-8 leading-tight px-4">Solusi All-in-One Untuk Pertumbuhan Digital Anda</h3>
+          <p className="text-lg sm:text-xl text-slate-500 leading-relaxed max-w-3xl mx-auto">
             Kami menyediakan strategi end-to-end mulai dari produksi konten hingga optimasi penjualan langsung di marketplace.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        {/* Updated grid: grid-cols-2 for mobile to make them "sejajar" */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-7xl mx-auto">
           <ServiceCard 
             icon={<Video />}
             title="Live Streaming Management"

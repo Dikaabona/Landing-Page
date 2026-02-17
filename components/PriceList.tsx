@@ -36,7 +36,12 @@ const PriceList: React.FC = () => {
       name: "Elite Enterprise",
       price: "Full Custom",
       desc: "Solusi premium yang disesuaikan khusus untuk korporasi dan brand besar.",
-      features: [],
+      features: [
+        "Full Management",
+        "Premium Production",
+        "Enterprise Reporting",
+        "24/7 Support"
+      ],
       recommended: false
     }
   ];
@@ -46,42 +51,44 @@ const PriceList: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">PAKET HARGA & INVESTASI</h2>
-          <h3 className="text-4xl sm:text-5xl font-[900] text-slate-900 leading-tight">Investasikan Pertumbuhan Brand Anda</h3>
+          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">Investasikan Pertumbuhan Brand Anda</h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+        {/* Updated grid: grid-cols-2 for mobile to make them "sejajar" */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-8 items-stretch">
           {plans.map((plan, i) => (
             <div 
               key={i} 
-              className={`relative bg-white rounded-[40px] p-10 border flex flex-col h-full transition-all duration-300 hover:shadow-2xl ${
+              className={`relative bg-white rounded-[24px] sm:rounded-[40px] p-5 sm:p-10 border flex flex-col h-full transition-all duration-300 hover:shadow-2xl ${
                 plan.recommended 
                   ? 'border-yellow-500 ring-4 ring-yellow-500/10 z-10' 
                   : 'border-slate-100 shadow-sm'
               }`}
             >
               {plan.recommended && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-900 px-6 py-2 rounded-full font-bold text-sm uppercase tracking-wider shadow-lg whitespace-nowrap">
+                <div className="absolute -top-3 sm:-top-5 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-900 px-3 py-1.5 sm:px-6 sm:py-2 rounded-full font-black text-[8px] sm:text-sm uppercase tracking-wider shadow-lg whitespace-nowrap">
                   Paling Direkomendasikan
                 </div>
               )}
               
-              <div className="mb-8">
-                <h4 className="text-2xl font-extrabold text-slate-900 mb-2">{plan.name}</h4>
-                <p className="text-slate-500 text-sm leading-relaxed font-medium">{plan.desc}</p>
+              <div className="mb-6 sm:mb-8">
+                <h4 className="text-sm sm:text-2xl font-extrabold text-slate-900 mb-1 sm:mb-2 leading-tight">{plan.name}</h4>
+                <p className="text-slate-500 text-[10px] sm:text-sm leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">{plan.desc}</p>
               </div>
 
-              <div className="mb-8 flex flex-col">
-                <span className="text-4xl font-black text-slate-900">{plan.price}</span>
+              <div className="mb-6 sm:mb-8 flex flex-col">
+                <span className="text-lg sm:text-4xl font-black text-slate-900 leading-none">{plan.price}</span>
                 {plan.amount && (
-                  <span className="text-2xl font-bold text-slate-600 mt-2">Rp {plan.amount}</span>
+                  <span className="text-base sm:text-2xl font-bold text-slate-600 mt-1 sm:mt-2">Rp {plan.amount}</span>
                 )}
               </div>
 
-              <ul className="space-y-4 mb-10 flex-grow">
+              <ul className="space-y-2 sm:space-y-4 mb-6 sm:mb-10 flex-grow">
                 {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start text-slate-700 font-semibold text-sm">
-                    <div className="mt-0.5 mr-3 w-5 h-5 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Check size={12} strokeWidth={4} />
+                  <li key={idx} className="flex items-start text-slate-700 font-semibold text-[9px] sm:text-sm leading-tight">
+                    <div className="mt-0.5 mr-1.5 sm:mr-3 w-3.5 h-3.5 sm:w-5 sm:h-5 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check size={8} strokeWidth={4} className="sm:hidden" />
+                      <Check size={12} strokeWidth={4} className="hidden sm:block" />
                     </div>
                     {feature}
                   </li>
@@ -93,7 +100,7 @@ const PriceList: React.FC = () => {
                   href={`${waUrl}?text=${encodeURIComponent(`Halo Visibel Agency, saya tertarik untuk memilih paket: ${plan.name}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`w-full py-5 rounded-2xl font-bold text-center block transition-all text-lg shadow-lg ${
+                  className={`w-full py-3 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-center block transition-all text-xs sm:text-lg shadow-lg ${
                     plan.recommended 
                       ? 'bg-yellow-500 text-slate-900 hover:bg-yellow-600 shadow-yellow-500/20' 
                       : 'bg-[#0f172a] text-white hover:bg-black shadow-slate-200/50'
