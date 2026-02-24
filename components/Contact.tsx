@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Instagram } from 'lucide-react';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -61,6 +61,29 @@ const Contact: React.FC = () => {
                   <p className="text-slate-600">Jl Ciomas harapan Kp neglasari RT 01/12 no 4, Kab Bogor, Jawa barat 16610</p>
                 </div>
               </div>
+            </div>
+
+            <div className="flex space-x-4">
+              <a 
+                href="https://www.instagram.com/visibel_id/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300"
+                aria-label="Instagram"
+              >
+                <Instagram size={24} />
+              </a>
+              <a 
+                href="https://www.tiktok.com/@visibel.id" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-12 h-12 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300"
+                aria-label="TikTok"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                </svg>
+              </a>
             </div>
           </div>
           

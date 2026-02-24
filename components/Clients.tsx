@@ -16,6 +16,10 @@ const Clients: React.FC = () => {
     { name: 'Client 11', id: '19dIIjxNubnzjarpLdDLJ0aL-Gunpvwoz' },
     { name: 'Client 12', id: '1WnGsnaYf9dA1IyWdXmHou2incuIQ6moB' },
     { name: 'Client 13', id: '1TcGh373N4MNFcX7qTDMCHvgpfTlVF6j3' },
+    { name: 'Client 14', id: '1iO-BTYKG-pcgiRyLXHiEOBi2OQMkfyP3' },
+    { name: 'Client 15', id: '1SprEXlNOTsQSeVtYQtvAQYyDrMtY8DGx' },
+    { name: 'Client 16', id: '15nkXH33304OgeKI2UTSjre3j1CsHUHP8' },
+    { name: 'Client 17', id: '10swPlx7-wBtgbZGsH9T9433VvlV3N6WN' },
   ];
 
   // Double the logos for a seamless loop

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Instagram } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -89,7 +89,29 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center space-x-6">
+            <div className="flex items-center space-x-4 mr-2">
+              <a 
+                href="https://www.instagram.com/visibel_id/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-slate-500 hover:text-yellow-500 transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={20} />
+              </a>
+              <a 
+                href="https://www.tiktok.com/@visibel.id" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-slate-500 hover:text-yellow-500 transition-colors"
+                aria-label="TikTok"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                </svg>
+              </a>
+            </div>
             <a
               href={rightLink.href}
               target="_blank"
@@ -133,6 +155,29 @@ const Navbar: React.FC = () => {
               {link.name}
             </a>
           ))}
+          
+          <div className="flex justify-center space-x-8 pt-6 pb-2 border-t border-slate-100">
+            <a 
+              href="https://www.instagram.com/visibel_id/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-slate-500 hover:text-yellow-500 transition-colors"
+              aria-label="Instagram"
+            >
+              <Instagram size={28} />
+            </a>
+            <a 
+              href="https://www.tiktok.com/@visibel.id" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-slate-500 hover:text-yellow-500 transition-colors"
+              aria-label="TikTok"
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+              </svg>
+            </a>
+          </div>
         </div>
       )}
     </nav>

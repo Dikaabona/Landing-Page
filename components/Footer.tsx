@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Instagram } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -51,6 +52,30 @@ const Footer: React.FC = () => {
             <p className="text-slate-400 text-sm sm:text-base mb-8 leading-relaxed font-medium max-w-sm">
               Partner pertumbuhan digital terpercaya yang fokus membantu brand memaksimalkan potensi penjualan melalui platform digital.
             </p>
+            
+            {/* Social Media Links */}
+            <div className="flex space-x-4 mb-8 lg:mb-0">
+              <a 
+                href="https://www.instagram.com/visibel_id/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300"
+                aria-label="Instagram"
+              >
+                <Instagram size={20} />
+              </a>
+              <a 
+                href="https://www.tiktok.com/@visibel.id" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white hover:bg-yellow-500 hover:text-slate-900 transition-all duration-300"
+                aria-label="TikTok"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                </svg>
+              </a>
+            </div>
           </div>
           
           {/* Links Section - 2 Columns (Sejajar) on Mobile */}
