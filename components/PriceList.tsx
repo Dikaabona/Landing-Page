@@ -34,17 +34,6 @@ const PriceList: React.FC = () => {
       recommended: true 
     },
     {
-      price: "Affiliate Management Service",
-      amount: "5.000.000",
-      features: [
-        "30 KOL",
-        "Script Content",
-        "Monthly Report",
-        "KOL sesuai niche"
-      ],
-      recommended: false
-    },
-    {
       price: "Ads Management",
       amount: "2.500.000",
       features: [

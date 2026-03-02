@@ -7,14 +7,15 @@ const ShortVideos: React.FC = () => {
 
   // ID video dari Google Drive termasuk video-video baru yang diminta
   const videos = [
-    '1uUn6ZyMcnwv6zMcVqXJGNGKc44mnva2U',
-    '1Rb1BIybtLt01hy8KFuT_EaiH_CQszYpP',
-    '10Hh14zuq0mBzbQGr28ETHBBzCxbh5nQy', // Video baru 1
     '1k3nKvJYONidCJMBSHe7RTh4x6wTNQgp6', // Video baru 2
     '1zTCh97o7gPxNvUOWDyBrDbqtZZ5Uu7aL', // Video baru 3
     '1DlmMqCh_dDEMAmoPehuEf7Q8Om3N8-1z', // Video baru 4
     '1qhlOmr2CCy4CbrKLyOHmc4iYVZrvLIRp',
-    '1RQ0ViiCyO-DDPMnyHvAn1TvEfKjB7b7L'
+    '1RQ0ViiCyO-DDPMnyHvAn1TvEfKjB7b7L',
+    '1JPDsuq_p-gXIleBrpMZRuMtMh3IW69Sa',
+    '1t56pAMIrIzydhFz0ERepaf0Yi0WvCex5',
+    '1Jmk_UxEj1z_iEOvVWbA3FkiQGbdWIHBz',
+    '1ikqbT6wblkdJjK19sTab77sgv2Huv_3G'
   ];
 
   const handleScroll = () => {

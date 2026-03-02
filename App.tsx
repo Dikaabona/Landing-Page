@@ -7,6 +7,7 @@ import Services from './components/Services';
 import Clients from './components/Clients';
 import Features from './components/Features';
 import PriceList from './components/PriceList';
+import LiveStreamingResult from './components/LiveStreamingResult';
 import LivestreamSetup from './components/LivestreamSetup';
 import ShortVideos from './components/ShortVideos';
 import VisiMisi from './components/VisiMisi';
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         {/* Services moved here based on user feedback to be above PriceList */}
         <Services />
         <PriceList />
+        <LiveStreamingResult />
         <LivestreamSetup />
         <ShortVideos />
         <Features />
