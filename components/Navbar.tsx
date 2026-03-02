@@ -123,10 +123,19 @@ const Navbar: React.FC = () => {
             </a>
           </div>
 
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-3">
+            <a
+              href={rightLink.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-yellow-500 text-slate-900 px-4 py-2 rounded-full font-bold text-xs hover:bg-yellow-600 transition-all shadow-md shadow-yellow-500/10 flex items-center gap-1.5"
+            >
+              <img src={brandIconUrl} alt="" className="h-3 w-auto object-contain brightness-0" />
+              {rightLink.name}
+            </a>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-900 p-2"
+              className="text-slate-900 p-1"
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>

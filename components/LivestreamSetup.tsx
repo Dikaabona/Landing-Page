@@ -57,13 +57,13 @@ const LivestreamSetup: React.FC = () => {
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4"
+            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-8"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {setupImages.map((img, idx) => (
               <div 
                 key={idx} 
-                className="flex-shrink-0 w-full md:w-1/2 lg:w-1/3 snap-start px-2 sm:px-4"
+                className="flex-shrink-0 w-[75%] md:w-1/2 lg:w-1/3 snap-center px-2 sm:px-4"
               >
                 <div className="relative aspect-[9/16] overflow-hidden bg-slate-50 shadow-lg rounded-[32px] border border-slate-100 group">
                   <img 
