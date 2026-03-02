@@ -51,13 +51,13 @@ const ShortVideos: React.FC = () => {
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide px-8"
+            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {videos.map((id, index) => (
               <div 
                 key={index} 
-                className="flex-shrink-0 w-[75%] sm:w-1/2 lg:w-1/3 snap-center px-3"
+                className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 snap-start px-3"
               >
                 <div className="group relative aspect-[9/16] bg-slate-900 rounded-[32px] overflow-hidden shadow-xl transition-all duration-500 border border-slate-100">
                   {/* Overlay shadow for depth */}
