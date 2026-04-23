@@ -98,7 +98,8 @@ const Footer: React.FC = () => {
                 <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Layanan Kami</a></li>
                 <li><a href="#why-us" onClick={(e) => handleScroll(e, 'why-us')} className="hover:text-yellow-500 transition-colors">Kenapa Visibel?</a></li>
                 <li><a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="hover:text-yellow-500 transition-colors">Hubungi Kami</a></li>
-                <li><a href="#" className="hover:text-yellow-500 transition-colors">Blog & Update</a></li>
+                <li><a href="/articles" className="hover:text-yellow-500 transition-colors">Blog & Article</a></li>
+                <li><a href="/admin" className="text-[10px] opacity-20 hover:opacity-100 transition-opacity">Admin Access</a></li>
               </ul>
             </div>
           </div>
