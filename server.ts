@@ -23,7 +23,7 @@ async function startServer() {
     app.use(vite.middlewares);
     
     // Fallback for SPA in dev mode
-    app.use('*', async (req, res, next) => {
+    app.all('*all', async (req, res, next) => {
       const url = req.originalUrl;
       try {
         const template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
@@ -37,7 +37,7 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
+    app.get('*all', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
