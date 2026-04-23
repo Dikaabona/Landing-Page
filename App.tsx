@@ -1,39 +1,27 @@
 
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import AdsPerformance from './components/AdsPerformance';
-import Services from './components/Services';
-import Clients from './components/Clients';
-import Features from './components/Features';
-import PriceList from './components/PriceList';
-import LiveStreamingResult from './components/LiveStreamingResult';
-import LivestreamSetup from './components/LivestreamSetup';
-import ShortVideos from './components/ShortVideos';
-import VisiMisi from './components/VisiMisi';
-import Contact from './components/Contact';
+import Home from './Home';
+import Calculator from './components/Calculator';
+import AdsCalculator from './components/AdsCalculator';
 import Footer from './components/Footer';
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <main>
-        <Hero />
-        <AdsPerformance />
-        {/* Services moved here based on user feedback to be above PriceList */}
-        <Services />
-        <PriceList />
-        <LiveStreamingResult />
-        <LivestreamSetup />
-        <ShortVideos />
-        <Features />
-        <Clients />
-        <VisiMisi />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <div className="min-h-screen">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/kalkulator" element={<Calculator />} />
+            <Route path="/kalkulator-ads" element={<AdsCalculator />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
