@@ -2,13 +2,70 @@
 import React, { useState, useEffect } from 'react';
 import { Calculator as CalcIcon, TrendingUp, DollarSign, Percent } from 'lucide-react';
 
+const FEES_DATA: any = {
+  shopee: {
+    'Non-Star': {
+      'Kategori A (Fashion, Aksesoris, dll)': 6.0,
+      'Kategori B (FMCG, Elektronik Kecil, dll)': 6.0,
+      'Kategori C (Hobi, Koleksi, dll)': 4.75,
+      'Kategori D (Elektronik Besar, dll)': 3.3,
+      'Kategori E (Kebutuhan Pokok, dll)': 3.3,
+    },
+    'Star/Star+': {
+      'Kategori A (Fashion, Aksesoris, dll)': 6.5,
+      'Kategori B (FMCG, Elektronik Kecil, dll)': 6.5,
+      'Kategori C (Hobi, Koleksi, dll)': 5.25,
+      'Kategori D (Elektronik Besar, dll)': 3.8,
+      'Kategori E (Kebutuhan Pokok, dll)': 3.8,
+    },
+    'Shopee Mall': {
+      'Kategori A (Fashion, Kosmetik, dll)': 8.5,
+      'Kategori B (FMCG, Ibu & Bayi, dll)': 6.0,
+      'Kategori C (Rumah Tangga, dll)': 5.0,
+      'Kategori D (Gadget, Video Game, dll)': 3.5,
+      'Kategori E (CCTV, Elektronik Besar, dll)': 1.0,
+    }
+  },
+  tiktok: {
+    'Mobile & Tablet': 1.0,
+    'Komputer & Laptop': 1.0,
+    'Peralatan Rumah Tangga (Besar)': 1.0,
+    'Audio & Video (TV, Speaker)': 2.0,
+    'Mainan & Hobi': 3.0,
+    'Buku, Majalah & Musik': 3.0,
+    'Kecantikan (Skincare, Make Up)': 4.3,
+    'Perawatan Diri / Kesehatan': 4.3,
+    'Fashion (Baju, Sepatu, Tas)': 4.3,
+    'Kebutuhan Ibu & Bayi': 4.3,
+    'Makanan & Minuman (FMCG)': 4.3,
+    'Lainnya (Lifestyle)': 4.3
+  }
+};
+
 const Calculator: React.FC = () => {
+  const [platform, setPlatform] = useState<string>('manual');
+  const [sellerType, setSellerType] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  
   const [sellingPrice, setSellingPrice] = useState<number>(0);
   const [cogs, setCogs] = useState<number>(0);
   const [adminFeePercent, setAdminFeePercent] = useState<number>(6);
   const [fixedFee, setFixedFee] = useState<number>(1000);
   const [marketingPercent, setMarketingPercent] = useState<number>(0);
   const [otherCosts, setOtherCosts] = useState<number>(2000);
+
+  // Update admin fee when platform, sellerType, or category changes
+  useEffect(() => {
+    if (platform === 'shopee' && sellerType && category) {
+      const fee = FEES_DATA.shopee[sellerType][category];
+      setAdminFeePercent(fee);
+      setFixedFee(sellerType === 'Shopee Mall' ? 0 : 1000); // Mall usually doesn't have regular fixed fee or it varies
+    } else if (platform === 'tiktok' && category) {
+      const fee = FEES_DATA.tiktok[category];
+      setAdminFeePercent(fee);
+      setFixedFee(2000); // TikTok typical checkout fee/fixed fee
+    }
+  }, [platform, sellerType, category]);
 
   const [results, setResults] = useState({
     adminFeeAmount: 0,
@@ -75,87 +132,171 @@ const Calculator: React.FC = () => {
               Input Penjualan
             </h4>
 
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Harga Jual (Rp)</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
-                  <input 
-                    type="text"
-                    value={formatInput(sellingPrice)}
-                    onChange={(e) => handleInputChange(e.target.value, setSellingPrice)}
-                    placeholder="Contoh: 150.000"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
-                  />
+            <div className="space-y-4 sm:space-y-6">
+              <div className="p-3 sm:p-4 bg-yellow-50 rounded-2xl border border-yellow-100 mb-4 sm:mb-6">
+                <label className="block text-[10px] sm:text-sm font-black text-yellow-800 mb-2 sm:mb-3 uppercase tracking-wider">Pilih Marketplace</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['manual', 'shopee', 'tiktok'].map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => {
+                        setPlatform(p);
+                        setSellerType('');
+                        setCategory('');
+                      }}
+                      className={`py-2 sm:py-3 rounded-xl font-bold text-[10px] sm:text-sm transition-all capitalize border-2 ${
+                        platform === p 
+                          ? 'bg-yellow-500 border-yellow-500 text-slate-900 shadow-lg shadow-yellow-500/20' 
+                          : 'bg-white border-slate-200 text-slate-500 hover:border-yellow-200'
+                      }`}
+                    >
+                      {p === 'manual' ? 'Custom' : p}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Modal Produk / HPP (Rp)</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
-                  <input 
-                    type="text"
-                    value={formatInput(cogs)}
-                    onChange={(e) => handleInputChange(e.target.value, setCogs)}
-                    placeholder="Contoh: 85.000"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
-                  />
+              {platform === 'shopee' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div>
+                    <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Tipe Seller</label>
+                    <select
+                      value={sellerType}
+                      onChange={(e) => {
+                        setSellerType(e.target.value);
+                        setCategory('');
+                      }}
+                      className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white"
+                    >
+                      <option value="">Pilih Tipe</option>
+                      {Object.keys(FEES_DATA.shopee).map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Kategori Produk</label>
+                    <select
+                      value={category}
+                      disabled={!sellerType}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white disabled:opacity-50"
+                    >
+                      <option value="">Pilih Kategori</option>
+                      {sellerType && Object.keys(FEES_DATA.shopee[sellerType]).map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="grid sm:grid-cols-2 gap-6">
+              {platform === 'tiktok' && (
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Biaya Admin (%)</label>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Kategori Produk Tokopedia/TikTok</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white"
+                  >
+                    <option value="">Pilih Kategori</option>
+                    {Object.keys(FEES_DATA.tiktok).map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
+                <div>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2 leading-tight">Admin (%) {platform !== 'manual' && '(Auto)'}</label>
+                  <div className="relative">
+                    <input 
+                      type="number"
+                      step="0.01"
+                      value={adminFeePercent || ''}
+                      onChange={(e) => platform === 'manual' && setAdminFeePercent(Number(e.target.value))}
+                      readOnly={platform !== 'manual'}
+                      className={`w-full pl-3 pr-8 sm:pl-4 sm:pr-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 transition-all font-bold text-sm sm:text-base text-slate-900 ${
+                        platform !== 'manual' ? 'bg-slate-100 border-slate-100 cursor-not-allowed' : 'border-slate-200 focus:border-yellow-500 focus:ring-0'
+                      }`}
+                    />
+                    <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">%</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2 leading-tight">Fixed Fee (Rp)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
+                    <input 
+                      type="text"
+                      value={formatInput(fixedFee)}
+                      onChange={(e) => platform === 'manual' && handleInputChange(e.target.value, setFixedFee)}
+                      readOnly={platform !== 'manual'}
+                      className={`w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 transition-all font-bold text-sm sm:text-base text-slate-900 ${
+                        platform !== 'manual' ? 'bg-slate-100 border-slate-100 cursor-not-allowed' : 'border-slate-200 focus:border-yellow-500 focus:ring-0'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
+                <div>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Harga Jual (Rp)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
+                    <input 
+                      type="text"
+                      value={formatInput(sellingPrice)}
+                      onChange={(e) => handleInputChange(e.target.value, setSellingPrice)}
+                      placeholder="Jual"
+                      className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Modal (Rp)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
+                    <input 
+                      type="text"
+                      value={formatInput(cogs)}
+                      onChange={(e) => handleInputChange(e.target.value, setCogs)}
+                      placeholder="Modal"
+                      className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
+                <div>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Marketing (%)</label>
                   <div className="relative">
                     <input 
                       type="number"
                       step="0.1"
-                      value={adminFeePercent || ''}
-                      onChange={(e) => setAdminFeePercent(Number(e.target.value))}
-                      className="w-full pl-4 pr-12 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
+                      value={marketingPercent || ''}
+                      onChange={(e) => setMarketingPercent(Number(e.target.value))}
+                      className="w-full pl-3 pr-8 sm:pl-4 sm:pr-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>
+                    <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">%</span>
                   </div>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Fixed Fee / Order (Rp)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Lainnya (Rp)</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
+                    <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                     <input 
                       type="text"
-                      value={formatInput(fixedFee)}
-                      onChange={(e) => handleInputChange(e.target.value, setFixedFee)}
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
+                      value={formatInput(otherCosts)}
+                      onChange={(e) => handleInputChange(e.target.value, setOtherCosts)}
+                      className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                     />
                   </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Biaya Marketing / Ads (%)</label>
-                <div className="relative">
-                  <input 
-                    type="number"
-                    step="0.1"
-                    value={marketingPercent || ''}
-                    onChange={(e) => setMarketingPercent(Number(e.target.value))}
-                    className="w-full pl-4 pr-12 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
-                  />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Biaya Lainnya (Packing/Operasional) (Rp)</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
-                  <input 
-                    type="text"
-                    value={formatInput(otherCosts)}
-                    onChange={(e) => handleInputChange(e.target.value, setOtherCosts)}
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
-                  />
                 </div>
               </div>
 

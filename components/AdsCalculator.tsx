@@ -79,46 +79,46 @@ const AdsCalculator: React.FC = () => {
               Data Dashboard Marketplace
             </h4>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Total Spend / Biaya Iklan (Rp)</label>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2 leading-tight">Total Spend / Biaya Iklan (Rp)</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
+                  <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                   <input 
                     type="text"
                     value={formatInput(dashboardSpend)}
                     onChange={(e) => handleInputChange(e.target.value, setDashboardSpend)}
-                    placeholder="Masukkan spend di dashboard"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
+                    placeholder="Spend Dashboard"
+                    className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                   />
                 </div>
-                <p className="mt-2 text-xs text-slate-400 flex items-center gap-1">
-                  <AlertCircle size={12} /> Data yang terlihat di dashboard iklan Shopee/Lazada/Tokopedia
+                <p className="mt-1 text-[10px] sm:text-xs text-slate-400 flex items-center gap-1">
+                  <AlertCircle size={10} className="sm:w-3 sm:h-3" /> Data terlihat di dashboard Shopee/Lazada/Tokopedia
                 </p>
               </div>
-
-              <div className="grid sm:grid-cols-2 gap-6">
+ 
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Total Penjualan (Rp)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Total Omzet (Rp)</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
+                    <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                     <input 
                       type="text"
                       value={formatInput(dashboardSales)}
                       onChange={(e) => handleInputChange(e.target.value, setDashboardSales)}
-                      placeholder="Total Omzet Iklan"
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
+                      placeholder="Omzet"
+                      className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Total Pesanan (Order)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Total Order</label>
                   <input 
                     type="number"
                     value={dashboardOrders || ''}
                     onChange={(e) => setDashboardOrders(Number(e.target.value))}
-                    placeholder="Jumlah order iklan"
-                    className="w-full px-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-slate-900"
+                    placeholder="Order"
+                    className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                   />
                 </div>
               </div>

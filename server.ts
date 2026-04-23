@@ -14,6 +14,11 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Test route to verify server is reachable
+  app.get('/api/ping', (req, res) => {
+    res.json({ message: 'pong', timestamp: new Date().toISOString() });
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -23,21 +28,23 @@ async function startServer() {
     app.use(vite.middlewares);
     
     // Fallback for SPA in dev mode
-    app.all('*all', async (req, res, next) => {
+    app.all('*', async (req, res, next) => {
       const url = req.originalUrl;
       try {
         const template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
         const html = await vite.transformIndexHtml(url, template);
         res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
       } catch (e) {
-        vite.ssrFixStacktrace(e as Error);
+        if (vite) {
+          vite.ssrFixStacktrace(e as Error);
+        }
         next(e);
       }
     });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*all', (req, res) => {
+    app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
