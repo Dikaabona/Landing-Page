@@ -10,12 +10,48 @@ const CareerForm: React.FC = () => {
     nama: '',
     ttl: '',
     alamat: '',
-    nohp: '',
+    nohp: '62',
     gaji: '',
     posisi: 'Live streaming',
     videoLink: '',
     portfolioLink: ''
   });
+
+  const formatGaji = (value: string) => {
+    // Remove non-digits
+    const number = value.replace(/\D/g, '');
+    if (!number) return '';
+    
+    // Format with thousand separators
+    const formatted = new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(Number(number));
+
+    return formatted;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    // Ensure it starts with 62 or handle if they try to delete 62
+    if (!value.startsWith('62')) {
+      if (value.startsWith('0')) {
+        value = '62' + value.slice(1);
+      } else {
+        value = '62' + value;
+      }
+    }
+    
+    setFormData({ ...formData, nohp: value });
+  };
+
+  const handleGajiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatGaji(e.target.value);
+    setFormData({ ...formData, gaji: formatted });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,10 +180,10 @@ const CareerForm: React.FC = () => {
                 <input 
                   required
                   type="tel" 
-                  placeholder="081234567890"
+                  placeholder="6281234567890"
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.nohp}
-                  onChange={(e) => setFormData({...formData, nohp: e.target.value})}
+                  onChange={handlePhoneChange}
                 />
               </div>
             </div>
@@ -176,10 +212,10 @@ const CareerForm: React.FC = () => {
                 <input 
                   required
                   type="text" 
-                  placeholder="Contoh: 5.000.000"
+                  placeholder="Rp 5.000.000"
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.gaji}
-                  onChange={(e) => setFormData({...formData, gaji: e.target.value})}
+                  onChange={handleGajiChange}
                 />
               </div>
 
@@ -203,12 +239,12 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <Video size={14} className="mr-1.5 text-yellow-500" />
-                  Video Live Streaming (GDrive)
+                  Video Live Streaming (GDrive) {formData.posisi === 'Live streaming' && <span className="text-red-500 ml-1">(Wajib)</span>}
                 </label>
                 <input 
-                  required
+                  required={formData.posisi === 'Live streaming'}
                   type="url" 
-                  placeholder="https://drive.google.com/..."
+                  placeholder={formData.posisi === 'Live streaming' ? "https://drive.google.com/..." : "Optional"}
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.videoLink}
                   onChange={(e) => setFormData({...formData, videoLink: e.target.value})}
@@ -218,12 +254,12 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <FileText size={14} className="mr-1.5 text-yellow-500" />
-                  Link Portfolio (GDrive)
+                  Link Portfolio (GDrive) {formData.posisi === 'Content creator' && <span className="text-red-500 ml-1">(Wajib)</span>}
                 </label>
                 <input 
-                  required
+                  required={formData.posisi === 'Content creator'}
                   type="url" 
-                  placeholder="https://drive.google.com/..."
+                  placeholder={formData.posisi === 'Content creator' ? "https://drive.google.com/..." : "Optional"}
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.portfolioLink}
                   onChange={(e) => setFormData({...formData, portfolioLink: e.target.value})}
