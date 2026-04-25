@@ -21,18 +21,27 @@ const ArticleDetail: React.FC = () => {
   useEffect(() => {
     const fetchArticle = async () => {
       if (!id) return;
-      const { data, error } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('id', id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('articles')
+          .select('*')
+          .eq('id', id)
+          .single();
 
-      if (error) {
-        console.error('Error fetching article:', error);
-      } else {
-        setArticle(data);
+        if (error) {
+          if (error.code === 'PGRST125' || error.message.includes('not found')) {
+            console.warn('Articles table might be missing in Supabase.');
+          } else {
+            console.error('Error fetching article:', error);
+          }
+        } else {
+          setArticle(data);
+        }
+      } catch (err) {
+        console.error('Unexpected error:', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchArticle();
