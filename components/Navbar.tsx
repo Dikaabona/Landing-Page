@@ -47,6 +47,7 @@ const Navbar: React.FC = () => {
     { name: 'Price List', href: '#price-list', external: false, type: 'hash' },
     { name: 'Kenapa Kami', href: '#why-us', external: false, type: 'hash' },
     { name: 'Article', href: '/articles', external: false, type: 'page' },
+    { name: 'Karir', href: '/karir', external: false, type: 'page' },
     { 
       name: 'Kalkulator Marketplace', 
       href: '/kalkulator', 
@@ -60,8 +61,8 @@ const Navbar: React.FC = () => {
     { name: 'Konsultasi Gratis', href: waUrl, external: true, type: 'external' },
   ];
 
-  const leftLinks = navLinks.slice(0, 5);
-  const rightLink = navLinks[5];
+  const leftLinks = navLinks.slice(0, 6);
+  const rightLink = navLinks[6];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, link: any) => {
     if (link.type === 'external') return;

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, ChevronRight, BookOpen } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { convertDriveUrl } from '../lib/utils';
 
 interface Article {
   id: string;
@@ -77,7 +78,7 @@ const ArticleList: React.FC = () => {
               <div key={article.id} className="bg-white rounded-[32px] overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
                 <div className="aspect-video bg-slate-200 relative overflow-hidden">
                   <img 
-                    src={article.image || "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800"} 
+                    src={convertDriveUrl(article.image) || "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800"} 
                     alt={article.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />

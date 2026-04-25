@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, PenTool, Send, Image as ImageIcon, AlignLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { convertDriveUrl } from '../lib/utils';
 
 const AdminArticle: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -35,7 +36,7 @@ const AdminArticle: React.FC = () => {
       title,
       excerpt,
       content,
-      image,
+      image: convertDriveUrl(image),
       author: 'Admin Visibel',
       created_at: new Date().toISOString()
     };

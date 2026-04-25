@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, ArrowLeft, User, Share2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { convertDriveUrl } from '../lib/utils';
 
 interface Article {
   id: string;
@@ -107,7 +108,7 @@ const ArticleDetail: React.FC = () => {
 
         {article.image && (
           <div className="aspect-[21/9] rounded-[40px] overflow-hidden mb-16 shadow-2xl">
-            <img src={article.image} alt="" className="w-full h-full object-cover" />
+            <img src={convertDriveUrl(article.image)} alt="" className="w-full h-full object-cover" />
           </div>
         )}
 

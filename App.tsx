@@ -8,6 +8,7 @@ import AdsCalculator from './components/AdsCalculator';
 import ArticleList from './components/ArticleList';
 import ArticleDetail from './components/ArticleDetail';
 import AdminArticle from './components/AdminArticle';
+import CareerForm from './components/CareerForm';
 import Footer from './components/Footer';
 
 const App: React.FC = () => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
             <Route path="/kalkulator-ads" element={<AdsCalculator />} />
             <Route path="/articles" element={<ArticleList />} />
             <Route path="/article/:id" element={<ArticleDetail />} />
+            <Route path="/karir" element={<CareerForm />} />
             <Route path="/admin" element={<AdminArticle />} />
           </Routes>
         </main>
