@@ -27,18 +27,27 @@ const FEES_DATA: any = {
     }
   },
   tiktok: {
-    'Mobile & Tablet': 1.0,
-    'Komputer & Laptop': 1.0,
-    'Peralatan Rumah Tangga (Besar)': 1.0,
-    'Audio & Video (TV, Speaker)': 2.0,
-    'Mainan & Hobi': 3.0,
-    'Buku, Majalah & Musik': 3.0,
-    'Kecantikan (Skincare, Make Up)': 4.3,
-    'Perawatan Diri / Kesehatan': 4.3,
-    'Fashion (Baju, Sepatu, Tas)': 4.3,
-    'Kebutuhan Ibu & Bayi': 4.3,
-    'Makanan & Minuman (FMCG)': 4.3,
-    'Lainnya (Lifestyle)': 4.3
+    'Merchant': {
+      'Grup 1 (Fashion, Kecantikan, Aksesoris)': 10.0,
+      'Grup 2 (FMCG, Ibu & Bayi, Hobi)': 8.0,
+      'Grup 3 (Elektronik, Lifestyle, dsb)': 6.5,
+      'Grup 4 (Buku, Rumah Tangga, dsb)': 5.0,
+      'Grup 5 (Gadget, Komputer, Handphone)': 1.0,
+    },
+    'Power Merchant': {
+      'Grup 1 (Fashion, Kecantikan, Aksesoris)': 14.0, // Base + 4% Bebas Ongkir
+      'Grup 2 (FMCG, Ibu & Bayi, Hobi)': 12.0,
+      'Grup 3 (Elektronik, Lifestyle, dsb)': 10.5,
+      'Grup 4 (Buku, Rumah Tangga, dsb)': 9.0,
+      'Grup 5 (Gadget, Komputer, Handphone)': 5.0,
+    },
+    'Official Store': {
+      'Grup 1 (Fashion, Kecantikan, Aksesoris)': 17.5, // Base + 1.8% Mall + 5.5% Bebas Ongkir (approx to image)
+      'Grup 2 (FMCG, Ibu & Bayi, Hobi)': 15.5,
+      'Grup 3 (Elektronik, Lifestyle, dsb)': 14.0,
+      'Grup 4 (Buku, Rumah Tangga, dsb)': 12.5,
+      'Grup 5 (Gadget, Komputer, Handphone)': 8.5,
+    }
   }
 };
 
@@ -50,6 +59,7 @@ const Calculator: React.FC = () => {
   const [sellingPrice, setSellingPrice] = useState<number>(0);
   const [cogs, setCogs] = useState<number>(0);
   const [adminFeePercent, setAdminFeePercent] = useState<number>(6);
+  const [serviceFeePercent, setServiceFeePercent] = useState<number>(0);
   const [fixedFee, setFixedFee] = useState<number>(1000);
   const [marketingPercent, setMarketingPercent] = useState<number>(0);
   const [otherCosts, setOtherCosts] = useState<number>(2000);
@@ -59,16 +69,24 @@ const Calculator: React.FC = () => {
     if (platform === 'shopee' && sellerType && category) {
       const fee = FEES_DATA.shopee[sellerType][category];
       setAdminFeePercent(fee);
-      setFixedFee(sellerType === 'Shopee Mall' ? 0 : 1000); // Mall usually doesn't have regular fixed fee or it varies
-    } else if (platform === 'tiktok' && category) {
-      const fee = FEES_DATA.tiktok[category];
+      // Average Shopee Service Fee (Gratis Ongkir Xtra 4% + Cashback Xtra 1.4%)
+      // If user wants specific, they can see the total in results
+      setServiceFeePercent(sellerType === 'Shopee Mall' ? 5 : 6); 
+      setFixedFee(1250); 
+    } else if (platform === 'tiktok' && sellerType && category) {
+      const fee = FEES_DATA.tiktok[sellerType][category];
       setAdminFeePercent(fee);
-      setFixedFee(2000); // TikTok typical checkout fee/fixed fee
+      setServiceFeePercent(0);
+      setFixedFee(1250); 
+    } else if (platform === 'manual') {
+      setServiceFeePercent(0);
     }
   }, [platform, sellerType, category]);
 
   const [results, setResults] = useState({
     adminFeeAmount: 0,
+    serviceFeeAmount: 0,
+    fixedFeeAmount: 0,
     marketingAmount: 0,
     totalCosts: 0,
     netProfit: 0,
@@ -77,22 +95,29 @@ const Calculator: React.FC = () => {
   });
 
   useEffect(() => {
-    const adminFeeAmount = (sellingPrice * adminFeePercent) / 100 + fixedFee;
+    const adminAmount = (sellingPrice * adminFeePercent) / 100;
+    const serviceAmount = (sellingPrice * serviceFeePercent) / 100;
+    const fixedAmount = fixedFee;
+    
+    const totalAdminCost = adminAmount + serviceAmount + fixedAmount;
+    
     const marketingAmount = (sellingPrice * marketingPercent) / 100;
-    const totalCosts = cogs + adminFeeAmount + marketingAmount + otherCosts;
+    const totalCosts = cogs + totalAdminCost + marketingAmount + otherCosts;
     const netProfit = sellingPrice - totalCosts;
     const margin = sellingPrice > 0 ? (netProfit / sellingPrice) * 100 : 0;
     const roi = cogs > 0 ? (netProfit / cogs) * 100 : 0;
 
     setResults({
-      adminFeeAmount,
+      adminFeeAmount: adminAmount,
+      serviceFeeAmount: serviceAmount,
+      fixedFeeAmount: fixedAmount,
       marketingAmount,
       totalCosts,
       netProfit,
       margin,
       roi
     });
-  }, [sellingPrice, cogs, adminFeePercent, fixedFee, marketingPercent, otherCosts]);
+  }, [sellingPrice, cogs, adminFeePercent, serviceFeePercent, fixedFee, marketingPercent, otherCosts]);
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -156,7 +181,7 @@ const Calculator: React.FC = () => {
                 </div>
               </div>
 
-              {platform === 'shopee' && (
+              {(platform === 'shopee' || platform === 'tiktok') && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Tipe Seller</label>
@@ -169,13 +194,15 @@ const Calculator: React.FC = () => {
                       className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white"
                     >
                       <option value="">Pilih Tipe</option>
-                      {Object.keys(FEES_DATA.shopee).map(type => (
+                      {Object.keys(FEES_DATA[platform]).map(type => (
                         <option key={type} value={type}>{type}</option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Kategori Produk</label>
+                    <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                      Kategori Produk {platform === 'tiktok' ? 'Tokopedia/TikTok' : ''}
+                    </label>
                     <select
                       value={category}
                       disabled={!sellerType}
@@ -183,27 +210,11 @@ const Calculator: React.FC = () => {
                       className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white disabled:opacity-50"
                     >
                       <option value="">Pilih Kategori</option>
-                      {sellerType && Object.keys(FEES_DATA.shopee[sellerType]).map(cat => (
+                      {sellerType && Object.keys(FEES_DATA[platform][sellerType]).map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                       ))}
                     </select>
                   </div>
-                </div>
-              )}
-
-              {platform === 'tiktok' && (
-                <div>
-                  <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Kategori Produk Tokopedia/TikTok</label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white"
-                  >
-                    <option value="">Pilih Kategori</option>
-                    {Object.keys(FEES_DATA.tiktok).map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
                 </div>
               )}
 
@@ -326,16 +337,34 @@ const Calculator: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-6 pt-8 border-t border-slate-800">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-400 font-bold">Biaya Admin Marketplace</span>
-                  <span className="text-white font-black">{formatCurrency(results.adminFeeAmount)}</span>
-                </div>
+              <div className="space-y-4 pt-8 border-t border-slate-800">
+                {platform === 'shopee' ? (
+                  <>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Biaya Administrasi</span>
+                      <span className="text-white font-bold">{formatCurrency(results.adminFeeAmount)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Biaya Layanan</span>
+                      <span className="text-white font-bold">{formatCurrency(results.serviceFeeAmount)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Biaya Proses Pesanan</span>
+                      <span className="text-white font-bold">{formatCurrency(results.fixedFeeAmount)}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400 font-bold">Biaya Platform / Admin</span>
+                    <span className="text-white font-black">{formatCurrency(results.adminFeeAmount + results.serviceFeeAmount + results.fixedFeeAmount)}</span>
+                  </div>
+                )}
+                
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400 font-bold">Biaya Marketing/Ads</span>
                   <span className="text-white font-black">{formatCurrency(results.marketingAmount)}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center pt-2">
                   <span className="text-slate-400 font-bold">Total Seluruh Biaya</span>
                   <span className="text-red-400 font-black">{formatCurrency(results.totalCosts)}</span>
                 </div>

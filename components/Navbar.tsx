@@ -236,20 +236,20 @@ const Navbar: React.FC = () => {
       </div>
 
       {isOpen && (
-        <div className="md:hidden bg-white border-b absolute top-full left-0 w-full p-4 space-y-4 shadow-xl">
+        <div className="md:hidden bg-white border-b absolute top-full left-0 w-full p-2 space-y-0.5 shadow-xl">
           {navLinks.map((link, idx) => (
             <div key={link.name} className="flex flex-col items-center">
               {link.subMenus ? (
                 <>
                   <button
                     onClick={() => setCalcMenuOpen(!calcMenuOpen)}
-                    className="flex items-center justify-center gap-2 text-lg font-bold px-4 py-3 rounded-xl text-slate-900 w-full hover:bg-slate-50"
+                    className="flex items-center justify-center gap-2 text-xs font-bold px-4 py-1 rounded-lg text-slate-900 w-full hover:bg-slate-50 transition-colors"
                   >
                     {link.name}
-                    <ChevronDown size={18} className={`transition-transform ${calcMenuOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={14} className={`transition-transform ${calcMenuOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {calcMenuOpen && (
-                    <div className="w-full bg-slate-50 rounded-2xl p-2 space-y-1 mt-2">
+                    <div className="w-full bg-slate-50 rounded-xl p-1.5 space-y-0.5 mt-0.5">
                        {link.subMenus.map((sub: any) => (
                         <a
                           key={sub.name}
@@ -261,7 +261,7 @@ const Navbar: React.FC = () => {
                             setIsOpen(false);
                             setCalcMenuOpen(false);
                           }}
-                          className="block text-center px-4 py-3 text-slate-600 font-bold text-sm hover:bg-white rounded-lg transition-all"
+                          className="block text-center px-4 py-1.5 text-slate-600 font-bold text-[9px] hover:bg-white rounded-md transition-all"
                         >
                           {sub.name}
                         </a>
@@ -274,15 +274,15 @@ const Navbar: React.FC = () => {
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
-                  className={`flex items-center justify-center gap-2 text-lg font-bold px-4 py-3 rounded-xl w-full ${
+                  className={`flex items-center justify-center gap-2 text-xs font-bold px-4 py-1 rounded-lg w-full transition-colors ${
                     idx === navLinks.length - 1 
-                      ? 'bg-yellow-500 text-slate-900 text-center' 
+                      ? 'bg-yellow-500 text-slate-900 text-center mt-1 py-1.5' 
                       : 'text-slate-900 hover:bg-slate-50'
                   }`}
                   onClick={(e) => handleNavClick(e, link)}
                 >
                   {idx === navLinks.length - 1 && (
-                    <img src={brandIconUrl} alt="" className="h-5 w-auto object-contain brightness-0" />
+                    <img src={brandIconUrl} alt="" className="h-3 w-auto object-contain brightness-0" />
                   )}
                   {link.name}
                 </a>
@@ -290,7 +290,7 @@ const Navbar: React.FC = () => {
             </div>
           ))}
           
-          <div className="flex justify-center space-x-8 pt-6 pb-2 border-t border-slate-100">
+          <div className="flex justify-center space-x-5 pt-2 pb-0.5 border-t border-slate-100 mt-1">
             <a 
               href="https://www.instagram.com/visibel_id/" 
               target="_blank" 
@@ -298,7 +298,7 @@ const Navbar: React.FC = () => {
               className="text-slate-500 hover:text-yellow-500 transition-colors"
               aria-label="Instagram"
             >
-              <Instagram size={28} />
+              <Instagram size={20} />
             </a>
             <a 
               href="https://www.tiktok.com/@visibel.id" 
@@ -307,7 +307,7 @@ const Navbar: React.FC = () => {
               className="text-slate-500 hover:text-yellow-500 transition-colors"
               aria-label="TikTok"
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
               </svg>
             </a>

@@ -87,49 +87,49 @@ const Contact: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white p-8 sm:p-10 rounded-[40px] shadow-2xl shadow-yellow-900/10 border border-slate-100">
-            <h4 className="text-xl font-bold text-slate-900 mb-6 text-center">Atau Kirim Form Konsultasi</h4>
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-white p-5 sm:p-10 rounded-[32px] sm:rounded-[40px] shadow-2xl shadow-yellow-900/10 border border-slate-100">
+            <h4 className="text-lg sm:text-xl font-bold text-slate-900 mb-4 sm:mb-6 text-center">Atau Kirim Form Konsultasi</h4>
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap</label>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Nama Lengkap</label>
                 <input 
                   type="text" 
                   placeholder="Contoh: Budi Santoso"
                   required
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
+                  className="w-full px-4 py-3 sm:px-5 sm:py-4 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl text-sm sm:text-base focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
                   value={formData.nama}
                   onChange={(e) => setFormData({...formData, nama: e.target.value})}
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Nama Brand</label>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Nama Brand</label>
                 <input 
                   type="text" 
                   placeholder="Contoh: Fashionista Indo"
                   required
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
+                  className="w-full px-4 py-3 sm:px-5 sm:py-4 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl text-sm sm:text-base focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
                   value={formData.brand}
                   onChange={(e) => setFormData({...formData, brand: e.target.value})}
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Nomor WhatsApp</label>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Nomor WhatsApp</label>
                 <input 
                   type="tel" 
                   placeholder="Contoh: 081234567890"
                   required
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
+                  className="w-full px-4 py-3 sm:px-5 sm:py-4 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl text-sm sm:text-base focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
                   value={formData.wa}
                   onChange={(e) => setFormData({...formData, wa: e.target.value})}
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Kebutuhan Layanan</label>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Kebutuhan Layanan</label>
                 <select 
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
+                  className="w-full px-4 py-3 sm:px-5 sm:py-4 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl text-sm sm:text-base focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all"
                   value={formData.layanan}
                   onChange={(e) => setFormData({...formData, layanan: e.target.value})}
                 >
@@ -142,10 +142,10 @@ const Contact: React.FC = () => {
               
               <button 
                 type="submit"
-                className="w-full bg-yellow-500 text-slate-900 py-5 rounded-2xl font-bold text-lg hover:bg-yellow-600 transition-all flex items-center justify-center group shadow-xl shadow-yellow-600/20"
+                className="w-full bg-yellow-500 text-slate-900 py-4 sm:py-5 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg hover:bg-yellow-600 transition-all flex items-center justify-center group shadow-xl shadow-yellow-600/20"
               >
                 Kirim Via WhatsApp
-                <Send className="ml-3 group-hover:translate-x-1 transition-transform" size={20} />
+                <Send className="ml-3 group-hover:translate-x-1 transition-transform" size={18} />
               </button>
             </form>
           </div>

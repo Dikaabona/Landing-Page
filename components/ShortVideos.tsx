@@ -41,8 +41,8 @@ const ShortVideos: React.FC = () => {
     <section id="short-videos" className="py-24 bg-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h3 className="text-4xl sm:text-7xl font-[900] text-slate-900 leading-tight mb-8">Our Short Videos</h3>
-          <p className="text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed">
+          <h3 className="text-3xl sm:text-7xl font-[900] text-slate-900 leading-tight mb-8">Our Short Videos</h3>
+          <p className="text-lg sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4">
             Konten video kreatif yang didesain khusus untuk menarik perhatian audiens, membangun branding, dan mengonversi viewers menjadi pembeli loyal.
           </p>
         </div>
@@ -52,15 +52,15 @@ const ShortVideos: React.FC = () => {
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0"
+            className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-0 py-4"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {videos.map((id, index) => (
               <div 
                 key={index} 
-                className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 snap-start px-3"
+                className="flex-shrink-0 w-[75vw] sm:w-1/2 lg:w-1/3 snap-center px-2 sm:px-4"
               >
-                <div className="group relative aspect-[9/16] bg-slate-900 rounded-[32px] overflow-hidden shadow-xl transition-all duration-500 border border-slate-100">
+                <div className="group relative aspect-[9/16] bg-slate-900 rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-xl transition-all duration-500 border border-slate-100">
                   {/* Overlay shadow for depth */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none z-10"></div>
                   
