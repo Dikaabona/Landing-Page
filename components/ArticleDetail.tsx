@@ -108,7 +108,12 @@ const ArticleDetail: React.FC = () => {
 
         {article.image && (
           <div className="aspect-[21/9] rounded-[40px] overflow-hidden mb-16 shadow-2xl">
-            <img src={convertDriveUrl(article.image)} alt="" className="w-full h-full object-cover" />
+            <img 
+              src={convertDriveUrl(article.image)} 
+              alt="" 
+              className="w-full h-full object-cover" 
+              referrerPolicy="no-referrer"
+            />
           </div>
         )}
 

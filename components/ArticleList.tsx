@@ -81,6 +81,7 @@ const ArticleList: React.FC = () => {
                     src={convertDriveUrl(article.image) || "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800"} 
                     alt={article.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    referrerPolicy="no-referrer"
                   />
                   <div className="absolute top-4 left-4 bg-yellow-500 text-slate-900 text-[10px] font-black px-3 py-1 rounded-full uppercase">
                     Edukasi
