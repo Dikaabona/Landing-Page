@@ -37,9 +37,12 @@ async function startServer() {
           });
           
           if (response.ok) {
+            console.log('Webhook Success:', await response.text());
             return res.status(200).json({ success: true, message: 'Data sent to spreadsheet' });
           } else {
-            console.error('Webhook returned error status:', response.status, await response.text());
+            const errorText = await response.text();
+            console.error('Webhook returned error status:', response.status, errorText);
+            return res.status(500).json({ success: false, message: 'Webhook error', details: errorText });
           }
         } catch (fetchErr) {
           console.error('Fetch error when calling webhook:', fetchErr);

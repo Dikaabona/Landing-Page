@@ -70,24 +70,29 @@ const CareerForm: React.FC = () => {
       // 1. Try to save to Supabase
       let sbSuccess = false;
       try {
-        const { error: sbError } = await supabase
+        const { error: sbError, status: sbStatus } = await supabase
           .from('careers')
           .insert([{
-            ...formData,
+            email: formData.email,
+            nama: formData.nama,
+            ttl: formData.ttl,
+            alamat: formData.alamat,
+            nohp: formData.nohp,
+            gaji: formData.gaji,
+            posisi: formData.posisi,
+            videoLink: formData.videoLink,
+            portfolioLink: formData.portfolioLink,
             created_at: timestamp
           }]);
 
         if (!sbError) {
           sbSuccess = true;
+          console.log('Supabase: Berhasil menyimpan data.');
         } else {
-          console.warn('Supabase save failed:', sbError);
-          // If table doesn't exist, provide specific error
-          if (sbError.code === '42P01' || sbError.message?.includes('does not exist')) {
-            console.log('Tabel "careers" belum dibuat di Supabase.');
-          }
+          console.error(`Supabase: Gagal (Status: ${sbStatus})`, sbError);
         }
       } catch (err) {
-        console.warn('Supabase connection error:', err);
+        console.error('Supabase: Kesalahan koneksi browser.', err);
       }
 
       // 2. Try to send to our backend API (which handles Google Sheets)
@@ -103,12 +108,13 @@ const CareerForm: React.FC = () => {
 
         if (response.ok) {
           apiSuccess = true;
+          console.log('Google Sheets: Berhasil mengirim melalui API proxy.');
         } else {
           const errorData = await response.json().catch(() => ({}));
-          console.warn('API save failed:', errorData);
+          console.error('Google Sheets: Gagal melalui API proxy.', errorData);
         }
       } catch (err) {
-        console.warn('API connection error:', err);
+        console.error('API: Kesalahan koneksi ke server lokal.', err);
       }
 
       if (sbSuccess || apiSuccess) {
