@@ -68,33 +68,60 @@ const CareerForm: React.FC = () => {
 
     try {
       // 1. Try to save to Supabase
-      const { error: sbError } = await supabase
-        .from('careers')
-        .insert([{
-          ...formData,
-          created_at: timestamp
-        }]);
+      let sbSuccess = false;
+      try {
+        const { error: sbError } = await supabase
+          .from('careers')
+          .insert([{
+            ...formData,
+            created_at: timestamp
+          }]);
 
-      if (sbError) {
-        console.warn('Supabase save failed, but will try API:', sbError);
-        // We continue because maybe the table isn't set up but the webhook is
+        if (!sbError) {
+          sbSuccess = true;
+        } else {
+          console.warn('Supabase save failed:', sbError);
+          // If table doesn't exist, provide specific error
+          if (sbError.code === '42P01' || sbError.message?.includes('does not exist')) {
+            console.log('Tabel "careers" belum dibuat di Supabase.');
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase connection error:', err);
       }
 
       // 2. Try to send to our backend API (which handles Google Sheets)
-      const response = await fetch('/api/career', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      let apiSuccess = false;
+      try {
+        const response = await fetch('/api/career', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
 
-      if (response.ok || !sbError) {
-        // If either Supabase or API worked, we consider it a success
+        if (response.ok) {
+          apiSuccess = true;
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          console.warn('API save failed:', errorData);
+        }
+      } catch (err) {
+        console.warn('API connection error:', err);
+      }
+
+      if (sbSuccess || apiSuccess) {
+        // If at least one worked, we consider it a success
         setSubmitted(true);
         window.scrollTo(0, 0);
       } else {
-        setError('Gagal mengirim lamaran. Silahkan coba lagi nanti.');
+        const envMissing = !(import.meta as any).env.VITE_SUPABASE_URL || !(import.meta as any).env.VITE_SUPABASE_ANON_KEY;
+        if (envMissing) {
+          setError('Variabel lingkungan Supabase (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY) belum diatur di platform AI Studio.');
+        } else {
+          setError('Gagal mengirim lamaran. Pastikan Tabel "careers" sudah dibuat di Supabase (jalankan perintah SQL di bawah) atau Webhook Google Sheets sudah benar.');
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -163,12 +190,23 @@ CREATE TABLE IF NOT EXISTS public.careers (
 ALTER TABLE public.careers ENABLE ROW LEVEL SECURITY;
 
 -- 3. Hapus Kebijakan lama jika ada dan buat baru
-DROP POLICY IF EXISTS "Allow public insert" ON public.careers;
-CREATE POLICY "Allow public insert" ON public.careers FOR INSERT WITH CHECK (true);
+DO $$ 
+BEGIN
+    DROP POLICY IF EXISTS "Allow public insert" ON public.careers;
+    CREATE POLICY "Allow public insert" ON public.careers FOR INSERT WITH CHECK (true);
+    
+    DROP POLICY IF EXISTS "Allow public read" ON public.articles;
+    CREATE POLICY "Allow public read" ON public.articles FOR SELECT USING (true);
 
--- Dan pastikan tabel "articles" juga sudah memiliki kebijakan yang benar:
-DROP POLICY IF EXISTS "Allow public read" ON public.articles;
-CREATE POLICY "Allow public read" ON public.articles FOR SELECT USING (true);
+    DROP POLICY IF EXISTS "Allow public insert" ON public.articles;
+    CREATE POLICY "Allow public insert" ON public.articles FOR INSERT WITH CHECK (true);
+
+    DROP POLICY IF EXISTS "Allow public update" ON public.articles;
+    CREATE POLICY "Allow public update" ON public.articles FOR UPDATE USING (true);
+
+    DROP POLICY IF EXISTS "Allow public delete" ON public.articles;
+    CREATE POLICY "Allow public delete" ON public.articles FOR DELETE USING (true);
+END $$;
 `}
               </pre>
             </div>

@@ -343,15 +343,20 @@ CREATE TABLE IF NOT EXISTS public.articles (
 ALTER TABLE public.articles ENABLE ROW LEVEL SECURITY;
 
 -- 3. Hapus Kebijakan lama jika ada dan buat baru
-DROP POLICY IF EXISTS "Allow public read" ON public.articles;
-DROP POLICY IF EXISTS "Allow public insert" ON public.articles;
-DROP POLICY IF EXISTS "Allow public update" ON public.articles;
-DROP POLICY IF EXISTS "Allow public delete" ON public.articles;
+DO $$ 
+BEGIN
+    DROP POLICY IF EXISTS "Allow public read" ON public.articles;
+    CREATE POLICY "Allow public read" ON public.articles FOR SELECT USING (true);
 
-CREATE POLICY "Allow public read" ON public.articles FOR SELECT USING (true);
-CREATE POLICY "Allow public insert" ON public.articles FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update" ON public.articles FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete" ON public.articles FOR DELETE USING (true);`}
+    DROP POLICY IF EXISTS "Allow public insert" ON public.articles;
+    CREATE POLICY "Allow public insert" ON public.articles FOR INSERT WITH CHECK (true);
+
+    DROP POLICY IF EXISTS "Allow public update" ON public.articles;
+    CREATE POLICY "Allow public update" ON public.articles FOR UPDATE USING (true);
+
+    DROP POLICY IF EXISTS "Allow public delete" ON public.articles;
+    CREATE POLICY "Allow public delete" ON public.articles FOR DELETE USING (true);
+END $$;`}
                       </pre>
                     </div>
                   )}
