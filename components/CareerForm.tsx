@@ -119,12 +119,17 @@ const CareerForm: React.FC = () => {
         console.error('API: Kesalahan koneksi ke server lokal.', err);
       }
 
-      if (sbSuccess || apiSuccess) {
-        // If at least one worked, we consider it a success
+      if (sbSuccess && apiSuccess) {
+        // Must succeed in both for full success
         setSubmitted(true);
         window.scrollTo(0, 0);
+      } else if (sbSuccess || apiSuccess) {
+        // Partial success (one failed)
+        setSubmitted(true);
+        window.scrollTo(0, 0);
+        console.warn('Peringatan: Satu dari dua penyimpanan data gagal. (SB:', sbSuccess, 'API:', apiSuccess, ')');
       } else {
-        setError('Gagal mengirim lamaran.');
+        setError('Gagal mengirim lamaran. Pastikan koneksi dan pengaturan sudah benar.');
       }
     } catch (error) {
       console.error('Error:', error);

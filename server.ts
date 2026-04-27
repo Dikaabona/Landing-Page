@@ -27,31 +27,44 @@ async function startServer() {
 
       const webhookUrl = process.env.CAREER_SPREADSHEET_WEBHOOK_URL;
       
-      if (webhookUrl) {
-        try {
-          // Forward to Google Apps Script Web App
-          const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
-          
-          if (response.ok) {
-            console.log('Webhook Success:', await response.text());
-            return res.status(200).json({ success: true, message: 'Data sent to spreadsheet' });
-          } else {
-            const errorText = await response.text();
-            console.error('Webhook returned error status:', response.status, errorText);
-            return res.status(500).json({ success: false, message: 'Webhook error', details: errorText });
-          }
-        } catch (fetchErr) {
-          console.error('Fetch error when calling webhook:', fetchErr);
-        }
+      if (!webhookUrl) {
+        console.error('CAREER_SPREADSHEET_WEBHOOK_URL is not defined');
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Webhook URL Spreadsheet belum diatur di Environment Variables.' 
+        });
       }
 
-      // If no webhook or webhook failed, we still return success to the user 
-      // but log it (for now, in a real app you might want to retry or save to DB)
-      res.status(200).json({ success: true, message: 'Submission logged on server' });
+      try {
+        // Forward to Google Apps Script Web App
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        const responseText = await response.text();
+        
+        if (response.ok) {
+          console.log('Webhook Success:', responseText);
+          return res.status(200).json({ success: true, message: 'Data sent to spreadsheet' });
+        } else {
+          console.error('Webhook returned error status:', response.status, responseText);
+          return res.status(500).json({ 
+            success: false, 
+            message: 'Google Sheets Apps Script returned an error.', 
+            details: responseText,
+            status: response.status 
+          });
+        }
+      } catch (fetchErr: any) {
+        console.error('Fetch error when calling webhook:', fetchErr);
+        return res.status(500).json({ 
+          success: false, 
+          message: 'Failed to connect to Google Sheets Webhook.', 
+          error: fetchErr.message 
+        });
+      }
     } catch (error) {
       console.error('Career submission error:', error);
       res.status(500).json({ success: false, message: 'Internal server error' });
