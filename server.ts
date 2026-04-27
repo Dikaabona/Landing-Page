@@ -28,17 +28,21 @@ async function startServer() {
       const webhookUrl = process.env.CAREER_SPREADSHEET_WEBHOOK_URL;
       
       if (webhookUrl) {
-        // Forward to Google Apps Script Web App
-        const response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        
-        if (response.ok) {
-          return res.status(200).json({ success: true, message: 'Data sent to spreadsheet' });
-        } else {
-          console.error('Failed to send data to webhook:', await response.text());
+        try {
+          // Forward to Google Apps Script Web App
+          const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          
+          if (response.ok) {
+            return res.status(200).json({ success: true, message: 'Data sent to spreadsheet' });
+          } else {
+            console.error('Webhook returned error status:', response.status, await response.text());
+          }
+        } catch (fetchErr) {
+          console.error('Fetch error when calling webhook:', fetchErr);
         }
       }
 
