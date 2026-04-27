@@ -100,7 +100,7 @@ const CareerForm: React.FC = () => {
       // 2. Try to send to our backend API (which handles Google Sheets)
       let apiSuccess = false;
       try {
-        const response = await fetch('/api/career', {
+        const response = await fetch('/api/submit-lamaran', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -20,10 +20,10 @@ async function startServer() {
   });
 
   // Career form submission endpoint
-  app.post('/api/career', async (req, res) => {
+  app.post('/api/submit-lamaran', async (req, res) => {
     try {
       const data = req.body;
-      console.log('New Career Submission:', data);
+      console.log('New Career Submission received at /api/submit-lamaran');
 
       const webhookUrl = process.env.CAREER_SPREADSHEET_WEBHOOK_URL;
       
