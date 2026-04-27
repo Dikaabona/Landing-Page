@@ -4,6 +4,7 @@ import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import cors from 'cors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,29 +13,36 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  app.use(cors());
   app.use(express.json());
+
+  // Log all requests for debugging
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+  });
 
   // Test route to verify server is reachable
   app.get('/api/ping', (req, res) => {
     res.json({ message: 'pong', timestamp: new Date().toISOString() });
   });
 
-  // Career form submission endpoint (supports both new and old paths for compatibility)
+  // Career form submission endpoint
   const handleSubmission = async (req: any, res: any) => {
+    console.log('--- Submission Process Started ---');
     try {
       const data = req.body;
-      console.log('Submission received:', data);
-
       const webhookUrl = process.env.CAREER_SPREADSHEET_WEBHOOK_URL;
       
       if (!webhookUrl) {
-        console.error('CAREER_SPREADSHEET_WEBHOOK_URL is missing');
+        console.error('ERROR: CAREER_SPREADSHEET_WEBHOOK_URL is missing in environment variables');
         return res.status(400).json({ 
           success: false, 
-          message: 'CAREER_SPREADSHEET_WEBHOOK_URL belum diatur di project settings (Environment Variables).' 
+          message: 'Konfigurasi CAREER_SPREADSHEET_WEBHOOK_URL belum diatur. Silakan atur di Settings > Secrets.' 
         });
       }
 
+      console.log('Forwarding data to Google Apps Script...');
       try {
         const response = await fetch(webhookUrl, {
           method: 'POST',
@@ -43,24 +51,29 @@ async function startServer() {
         });
         
         const responseText = await response.text();
+        console.log('Google Apps Script response status:', response.status);
         
         if (response.ok) {
+          console.log('SUCCESS: Data sent to spreadsheet');
           return res.status(200).json({ success: true });
         } else {
+          console.error('ERROR from Spreadsheet:', responseText);
           return res.status(500).json({ 
             success: false, 
-            message: 'Spreadsheet Apps Script returned an error.',
+            message: 'Aplikasi Google Sheets mengembalikan error.',
             details: responseText
           });
         }
       } catch (err: any) {
+        console.error('FETCH ERROR:', err.message);
         return res.status(500).json({ 
           success: false, 
-          message: 'Gagal menghubungi Webhook Spreadsheet: ' + err.message 
+          message: 'Gagal terhubung ke Webhook Spreadsheet: ' + err.message 
         });
       }
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Internal server error' });
+    } catch (error: any) {
+      console.error('SYSTEM ERROR:', error.message);
+      res.status(500).json({ success: false, message: 'Internal server error: ' + error.message });
     }
   };
 
@@ -74,21 +87,6 @@ async function startServer() {
       appType: "spa",
     });
     app.use(vite.middlewares);
-    
-    // Fallback for SPA in dev mode
-    app.all('*', async (req, res, next) => {
-      const url = req.originalUrl;
-      try {
-        const template = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf-8');
-        const html = await vite.transformIndexHtml(url, template);
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-      } catch (e) {
-        if (vite) {
-          vite.ssrFixStacktrace(e as Error);
-        }
-        next(e);
-      }
-    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
@@ -98,7 +96,8 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Available routes: /api/ping, /api/submit-lamaran`);
   });
 }
 

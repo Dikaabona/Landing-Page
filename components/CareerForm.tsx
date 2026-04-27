@@ -70,7 +70,7 @@ const CareerForm: React.FC = () => {
       // 1. Try to save to Supabase
       let sbSuccess = false;
       try {
-        const { error: sbError, status: sbStatus } = await supabase
+        const { error: sbError } = await supabase
           .from('careers')
           .insert([{
             email: formData.email,
@@ -87,53 +87,46 @@ const CareerForm: React.FC = () => {
 
         if (!sbError) {
           sbSuccess = true;
-          console.log('Supabase: Berhasil menyimpan data.');
+          console.log('Supabase success');
         } else {
-          console.error(`Supabase Error (${sbStatus}):`, sbError);
-          setError('Gagal mengirim lamaran.');
+          console.error('Supabase error:', sbError);
         }
-      } catch (err: any) {
-        console.error('Supabase Connection Error:', err);
-        setError('Gagal mengirim lamaran.');
+      } catch (err) {
+        console.error('Supabase catch:', err);
       }
 
       // 2. Try to send to our backend API (which handles Google Sheets)
       let apiSuccess = false;
       try {
+        console.log('Sending to API proxy...');
         const response = await fetch('/api/submit-lamaran', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
 
         if (response.ok) {
           apiSuccess = true;
-          console.log('Google Sheets: Berhasil mengirim.');
+          console.log('API success');
         } else {
           const errorData = await response.json().catch(() => ({}));
-          console.error('Google Sheets Error:', errorData);
-          if (errorData.message) {
-            setError(errorData.message);
+          console.error('API error status:', response.status, errorData);
+          if (response.status === 404) {
+            setError('Error 404: Endpoint API tidak ditemukan. Pastikan server backend berjalan.');
+          } else {
+            setError(errorData.message || `Server error (${response.status})`);
           }
         }
       } catch (err: any) {
-        console.error('API Connection Error:', err);
-        setError('Koneksi ke API gagal. Periksa koneksi internet Anda.');
+        console.error('API catch:', err);
+        setError('Gagal menghubungi server: ' + err.message);
       }
 
-      if (sbSuccess && apiSuccess) {
-        // Must succeed in both for full success
+      if (sbSuccess || apiSuccess) {
         setSubmitted(true);
         window.scrollTo(0, 0);
-      } else if (sbSuccess || apiSuccess) {
-        // Partial success (one failed)
-        setSubmitted(true);
-        window.scrollTo(0, 0);
-        console.warn('Peringatan: Satu dari dua penyimpanan data gagal. (SB:', sbSuccess, 'API:', apiSuccess, ')');
       } else {
-        setError('Gagal mengirim lamaran. Pastikan koneksi dan pengaturan sudah benar.');
+        setError('Gagal mengirim lamaran.');
       }
     } catch (error) {
       console.error('Error:', error);
