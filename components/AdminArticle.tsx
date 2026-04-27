@@ -342,21 +342,18 @@ CREATE TABLE IF NOT EXISTS public.articles (
 -- 2. Aktifkan RLS
 ALTER TABLE public.articles ENABLE ROW LEVEL SECURITY;
 
--- 3. Hapus Kebijakan lama jika ada dan buat baru
-DO $$ 
-BEGIN
-    DROP POLICY IF EXISTS "Allow public read" ON public.articles;
-    CREATE POLICY "Allow public read" ON public.articles FOR SELECT USING (true);
+-- 3. Atur Kebijakan Akses (RLS)
+DROP POLICY IF EXISTS "Allow public read" ON public.articles;
+CREATE POLICY "Allow public read" ON public.articles FOR SELECT USING (true);
 
-    DROP POLICY IF EXISTS "Allow public insert" ON public.articles;
-    CREATE POLICY "Allow public insert" ON public.articles FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow public insert" ON public.articles;
+CREATE POLICY "Allow public insert" ON public.articles FOR INSERT WITH CHECK (true);
 
-    DROP POLICY IF EXISTS "Allow public update" ON public.articles;
-    CREATE POLICY "Allow public update" ON public.articles FOR UPDATE USING (true);
+DROP POLICY IF EXISTS "Allow public update" ON public.articles;
+CREATE POLICY "Allow public update" ON public.articles FOR UPDATE USING (true);
 
-    DROP POLICY IF EXISTS "Allow public delete" ON public.articles;
-    CREATE POLICY "Allow public delete" ON public.articles FOR DELETE USING (true);
-END $$;`}
+DROP POLICY IF EXISTS "Allow public delete" ON public.articles;
+CREATE POLICY "Allow public delete" ON public.articles FOR DELETE USING (true);`}
                       </pre>
                     </div>
                   )}
