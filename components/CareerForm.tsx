@@ -110,13 +110,17 @@ const CareerForm: React.FC = () => {
 
         if (response.ok) {
           apiSuccess = true;
-          console.log('Google Sheets: Berhasil mengirim melalui API proxy.');
+          console.log('Google Sheets: Berhasil mengirim.');
         } else {
           const errorData = await response.json().catch(() => ({}));
-          console.error('Google Sheets: Gagal melalui API proxy.', errorData);
+          console.error('Google Sheets Error:', errorData);
+          if (errorData.message) {
+            setError(errorData.message);
+          }
         }
-      } catch (err) {
-        console.error('API: Kesalahan koneksi ke server lokal.', err);
+      } catch (err: any) {
+        console.error('API Connection Error:', err);
+        setError('Koneksi ke API gagal. Periksa koneksi internet Anda.');
       }
 
       if (sbSuccess && apiSuccess) {
@@ -178,7 +182,10 @@ const CareerForm: React.FC = () => {
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-500 mr-4">
                 <CheckCircle2 size={24} className="rotate-180" />
               </div>
-              <p className="text-red-700 font-black text-lg">Gagal mengirim lamaran.</p>
+              <div>
+                <p className="text-red-700 font-black text-lg">Gagal mengirim lamaran.</p>
+                <p className="text-red-600 text-xs font-bold leading-tight">{error}</p>
+              </div>
             </div>
             <button 
               onClick={() => setError(null)}

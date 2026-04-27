@@ -19,24 +19,23 @@ async function startServer() {
     res.json({ message: 'pong', timestamp: new Date().toISOString() });
   });
 
-  // Career form submission endpoint
-  app.post('/api/submit-lamaran', async (req, res) => {
+  // Career form submission endpoint (supports both new and old paths for compatibility)
+  const handleSubmission = async (req: any, res: any) => {
     try {
       const data = req.body;
-      console.log('New Career Submission received at /api/submit-lamaran');
+      console.log('Submission received:', data);
 
       const webhookUrl = process.env.CAREER_SPREADSHEET_WEBHOOK_URL;
       
       if (!webhookUrl) {
-        console.error('CAREER_SPREADSHEET_WEBHOOK_URL is not defined');
+        console.error('CAREER_SPREADSHEET_WEBHOOK_URL is missing');
         return res.status(400).json({ 
           success: false, 
-          message: 'Webhook URL Spreadsheet belum diatur di Environment Variables.' 
+          message: 'CAREER_SPREADSHEET_WEBHOOK_URL belum diatur di project settings (Environment Variables).' 
         });
       }
 
       try {
-        // Forward to Google Apps Script Web App
         const response = await fetch(webhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -46,30 +45,27 @@ async function startServer() {
         const responseText = await response.text();
         
         if (response.ok) {
-          console.log('Webhook Success:', responseText);
-          return res.status(200).json({ success: true, message: 'Data sent to spreadsheet' });
+          return res.status(200).json({ success: true });
         } else {
-          console.error('Webhook returned error status:', response.status, responseText);
           return res.status(500).json({ 
             success: false, 
-            message: 'Google Sheets Apps Script returned an error.', 
-            details: responseText,
-            status: response.status 
+            message: 'Spreadsheet Apps Script returned an error.',
+            details: responseText
           });
         }
-      } catch (fetchErr: any) {
-        console.error('Fetch error when calling webhook:', fetchErr);
+      } catch (err: any) {
         return res.status(500).json({ 
           success: false, 
-          message: 'Failed to connect to Google Sheets Webhook.', 
-          error: fetchErr.message 
+          message: 'Gagal menghubungi Webhook Spreadsheet: ' + err.message 
         });
       }
     } catch (error) {
-      console.error('Career submission error:', error);
       res.status(500).json({ success: false, message: 'Internal server error' });
     }
-  });
+  };
+
+  app.post('/api/submit-lamaran', handleSubmission);
+  app.post('/api/career', handleSubmission);
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
