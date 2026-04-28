@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     if (!webhookUrl) {
       return Response.json({
         success: false,
-        message: 'CAREER_SPREADSHEET_WEBHOOK_URL belum diset di Vercel!'
+        message: 'Gagal mengirim lamaran'
       }, { status: 400 });
     }
 
