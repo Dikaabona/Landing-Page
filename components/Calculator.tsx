@@ -63,6 +63,8 @@ const Calculator: React.FC = () => {
   const [fixedFee, setFixedFee] = useState<number>(1000);
   const [marketingPercent, setMarketingPercent] = useState<number>(0);
   const [otherCosts, setOtherCosts] = useState<number>(2000);
+  const [affiliatePercent, setAffiliatePercent] = useState<number>(0);
+  const [isPreOrder, setIsPreOrder] = useState<boolean>(false);
 
   // Update admin fee when platform, sellerType, or category changes
   useEffect(() => {
@@ -88,6 +90,8 @@ const Calculator: React.FC = () => {
     serviceFeeAmount: 0,
     fixedFeeAmount: 0,
     marketingAmount: 0,
+    affiliateAmount: 0,
+    preOrderAmount: 0,
     totalCosts: 0,
     netProfit: 0,
     margin: 0,
@@ -102,7 +106,10 @@ const Calculator: React.FC = () => {
     const totalAdminCost = adminAmount + serviceAmount + fixedAmount;
     
     const marketingAmount = (sellingPrice * marketingPercent) / 100;
-    const totalCosts = cogs + totalAdminCost + marketingAmount + otherCosts;
+    const affiliateAmount = (sellingPrice * affiliatePercent) / 100;
+    const preOrderAmount = (isPreOrder && platform !== 'manual') ? (sellingPrice * 3) / 100 : 0;
+    
+    const totalCosts = cogs + totalAdminCost + marketingAmount + affiliateAmount + preOrderAmount + otherCosts;
     const netProfit = sellingPrice - totalCosts;
     const margin = sellingPrice > 0 ? (netProfit / sellingPrice) * 100 : 0;
     const roi = cogs > 0 ? (netProfit / cogs) * 100 : 0;
@@ -112,12 +119,14 @@ const Calculator: React.FC = () => {
       serviceFeeAmount: serviceAmount,
       fixedFeeAmount: fixedAmount,
       marketingAmount,
+      affiliateAmount,
+      preOrderAmount,
       totalCosts,
       netProfit,
       margin,
       roi
     });
-  }, [sellingPrice, cogs, adminFeePercent, serviceFeePercent, fixedFee, marketingPercent, otherCosts]);
+  }, [sellingPrice, cogs, adminFeePercent, serviceFeePercent, fixedFee, marketingPercent, otherCosts, affiliatePercent, isPreOrder, platform]);
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -284,7 +293,7 @@ const Calculator: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Marketing (%)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Biaya Iklan (%)</label>
                   <div className="relative">
                     <input 
                       type="number"
@@ -298,7 +307,7 @@ const Calculator: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Lainnya (Rp)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Packing (Rp)</label>
                   <div className="relative">
                     <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                     <input 
@@ -309,6 +318,40 @@ const Calculator: React.FC = () => {
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="pt-2">
+                <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Komisi Affiliate (%)</label>
+                <div className="relative">
+                  <input 
+                    type="number"
+                    step="0.1"
+                    value={affiliatePercent || ''}
+                    onChange={(e) => setAffiliatePercent(Number(e.target.value))}
+                    placeholder="Masukkan % komisi affiliate"
+                    className="w-full pl-3 pr-8 sm:pl-4 sm:pr-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
+                  />
+                  <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">%</span>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between bg-slate-100/50 p-4 rounded-2xl border border-slate-200/50">
+                <div className="flex flex-col">
+                  <span className="text-xs sm:text-sm font-bold text-slate-700">Pre-Order Item?</span>
+                  <span className="text-[10px] text-slate-500">Otomatis +3% biaya untuk Shopee/Tiktok</span>
+                </div>
+                <button
+                  onClick={() => setIsPreOrder(!isPreOrder)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                    isPreOrder ? 'bg-yellow-500' : 'bg-slate-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      isPreOrder ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
               </div>
 
             </div>
@@ -361,9 +404,19 @@ const Calculator: React.FC = () => {
                 )}
                 
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400 font-bold">Biaya Marketing/Ads</span>
+                  <span className="text-slate-400 font-bold">Biaya Iklan</span>
                   <span className="text-white font-black">{formatCurrency(results.marketingAmount)}</span>
                 </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400 font-bold">Komisi Affiliate</span>
+                  <span className="text-white font-black">{formatCurrency(results.affiliateAmount)}</span>
+                </div>
+                {results.preOrderAmount > 0 && (
+                  <div className="flex justify-between items-center text-yellow-500">
+                    <span className="font-bold">Biaya Pre-Order (3%)</span>
+                    <span className="font-black">{formatCurrency(results.preOrderAmount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center pt-2">
                   <span className="text-slate-400 font-bold">Total Seluruh Biaya</span>
                   <span className="text-red-400 font-black">{formatCurrency(results.totalCosts)}</span>
