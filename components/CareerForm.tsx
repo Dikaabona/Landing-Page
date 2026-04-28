@@ -97,8 +97,6 @@ const CareerForm: React.FC = () => {
 
       // 2. Try to send to our backend API (which handles Google Sheets)
       let apiSuccess = false;
-      let apiErrorMessage = '';
-      
       try {
         console.log('Sending to API proxy...');
         const response = await fetch('/api/submit-lamaran', {
@@ -113,23 +111,28 @@ const CareerForm: React.FC = () => {
         } else {
           const errorData = await response.json().catch(() => ({}));
           console.error('API error status:', response.status, errorData);
-          apiErrorMessage = errorData.message || `Server error (${response.status})`;
+          if (response.status === 404) {
+            setError('Error 404: Endpoint API tidak ditemukan. Pastikan server backend berjalan.');
+          } else {
+            setError(errorData.message || `Server error (${response.status})`);
+          }
         }
       } catch (err: any) {
         console.error('API catch:', err);
-        apiErrorMessage = err.message;
+        setError('Gagal menghubungi server: ' + err.message);
       }
 
-      // Final decision: if API (Spreadsheet) fails, show error even if DB succeeded
-      if (apiSuccess) {
+      if (sbSuccess || apiSuccess) {
         setSubmitted(true);
         window.scrollTo(0, 0);
       } else {
-        setError(`Gagal mengirim ke Spreadsheet: ${apiErrorMessage}. Silakan periksa konfigurasi Vercel Anda.`);
+        setError('Gagal mengirim lamaran.');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error:', error);
-      setError('Terjadi kesalahan fatal: ' + error.message);
+      // If we got here but Supabase worked earlier, it's still ok
+      // But we check if submitted is still false
+      setError('Gagal mengirim lamaran.');
     } finally {
       setLoading(false);
     }
