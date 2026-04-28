@@ -23,62 +23,74 @@ async function startServer() {
   });
 
   // Test route to verify server is reachable
+  app.get('/api/status', (req, res) => {
+    res.json({ 
+      status: 'online', 
+      webhook_configured: !!process.env.CAREER_SPREADSHEET_WEBHOOK_URL,
+      timestamp: new Date().toISOString() 
+    });
+  });
+
   app.get('/api/ping', (req, res) => {
     res.json({ message: 'pong', timestamp: new Date().toISOString() });
   });
 
   // Career form submission endpoint
   const handleSubmission = async (req: any, res: any) => {
-    console.log('--- Submission Process Started ---');
+    const requestId = Math.random().toString(36).substring(7);
+    console.log(`[${requestId}] --- Submission Process Started ---`);
+    console.log(`[${requestId}] Request Body:`, JSON.stringify(req.body).substring(0, 500) + '...');
+    
     try {
       const data = req.body;
       const webhookUrl = process.env.CAREER_SPREADSHEET_WEBHOOK_URL;
       
       if (!webhookUrl) {
-        console.error('ERROR: CAREER_SPREADSHEET_WEBHOOK_URL is missing in environment variables');
+        console.error(`[${requestId}] ERROR: CAREER_SPREADSHEET_WEBHOOK_URL is missing`);
         return res.status(400).json({ 
           success: false, 
-          message: 'Konfigurasi CAREER_SPREADSHEET_WEBHOOK_URL belum diatur. Silakan atur di Settings > Secrets.' 
+          message: 'Webhook URL belum diatur di Settings > Secrets (Environment Variables).' 
         });
       }
 
-      console.log('Forwarding data to Google Apps Script...');
-      try {
-        const response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        
-        const responseText = await response.text();
-        console.log('Google Apps Script response status:', response.status);
-        
-        if (response.ok) {
-          console.log('SUCCESS: Data sent to spreadsheet');
-          return res.status(200).json({ success: true });
-        } else {
-          console.error('ERROR from Spreadsheet:', responseText);
-          return res.status(500).json({ 
-            success: false, 
-            message: 'Aplikasi Google Sheets mengembalikan error.',
-            details: responseText
-          });
-        }
-      } catch (err: any) {
-        console.error('FETCH ERROR:', err.message);
+      console.log(`[${requestId}] Forwarding to Google Apps Script...`);
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      const responseText = await response.text();
+      console.log(`[${requestId}] Google Apps Script response status:`, response.status);
+      
+      if (response.ok) {
+        console.log(`[${requestId}] SUCCESS: Data sent to spreadsheet`);
+        return res.status(200).json({ success: true });
+      } else {
+        console.error(`[${requestId}] ERROR from Apps Script:`, responseText);
         return res.status(500).json({ 
           success: false, 
-          message: 'Gagal terhubung ke Webhook Spreadsheet: ' + err.message 
+          message: 'Apps Script mengembalikan error. Periksa deployment AppScript Anda.',
+          details: responseText
         });
       }
     } catch (error: any) {
-      console.error('SYSTEM ERROR:', error.message);
-      res.status(500).json({ success: false, message: 'Internal server error: ' + error.message });
+      console.error(`[${requestId}] SYSTEM ERROR:`, error.message);
+      res.status(500).json({ success: false, message: 'Server backend error: ' + error.message });
     }
   };
 
+  // Define API routes explicitly
   app.post('/api/submit-lamaran', handleSubmission);
   app.post('/api/career', handleSubmission);
+  
+  // Also support GET for testing
+  app.get('/api/test-form', (req, res) => {
+    res.send('API is ready for POST requests at /api/submit-lamaran');
+  });
+
+  app.options('/api/submit-lamaran', (req, res) => res.sendStatus(204));
+  app.options('/api/career', (req, res) => res.sendStatus(204));
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
