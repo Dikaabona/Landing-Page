@@ -9,10 +9,10 @@ import cors from 'cors';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
+async function setupServer() {
   app.use(cors());
   app.use(express.json());
 
@@ -126,4 +126,14 @@ async function startServer() {
   });
 }
 
-startServer();
+// Check if we are running in a local environment
+const isLocal = process.env.NODE_ENV !== 'production' || !!process.env.VITE_DEV;
+
+if (isLocal) {
+  setupServer().catch(err => {
+    console.error('Failed to start server:', err);
+  });
+}
+
+export { app };
+export default app;
