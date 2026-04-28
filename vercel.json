@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/submit-lamaran", "destination": "/api/submit-lamaran.ts" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
