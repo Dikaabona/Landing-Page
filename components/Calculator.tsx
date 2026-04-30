@@ -12,7 +12,7 @@ const FEES_DATA: any = {
       'Kategori E (Kebutuhan Pokok, dll)': 3.3,
     },
     'Star/Star+': {
-      'Kategori A (Fashion, Aksesoris, dll)': 6.5,
+      'Kategori A (Fashion, Aksesoris, dll)': 8.25,
       'Kategori B (FMCG, Elektronik Kecil, dll)': 6.5,
       'Kategori C (Hobi, Koleksi, dll)': 5.25,
       'Kategori D (Elektronik Besar, dll)': 3.8,
@@ -35,7 +35,7 @@ const FEES_DATA: any = {
       'Grup 5 (Gadget, Komputer, Handphone)': 1.0,
     },
     'Power Merchant': {
-      'Grup 1 (Fashion, Kecantikan, Aksesoris)': 14.0, // Base + 4% Bebas Ongkir
+      'Grup 1 (Fashion, Kecantikan, Aksesoris)': 9.25, // Updated from 14.0
       'Grup 2 (FMCG, Ibu & Bayi, Hobi)': 12.0,
       'Grup 3 (Elektronik, Lifestyle, dsb)': 10.5,
       'Grup 4 (Buku, Rumah Tangga, dsb)': 9.0,
@@ -52,19 +52,27 @@ const FEES_DATA: any = {
 };
 
 const Calculator: React.FC = () => {
-  const [platform, setPlatform] = useState<string>('manual');
+  const [platform, setPlatform] = useState<string>('shopee');
   const [sellerType, setSellerType] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   
   const [sellingPrice, setSellingPrice] = useState<number>(0);
   const [cogs, setCogs] = useState<number>(0);
-  const [adminFeePercent, setAdminFeePercent] = useState<number>(6);
+  const [adminFeePercent, setAdminFeePercent] = useState<number>(8.25);
   const [serviceFeePercent, setServiceFeePercent] = useState<number>(0);
-  const [fixedFee, setFixedFee] = useState<number>(1000);
+  const [fixedFee, setFixedFee] = useState<number>(1250);
   const [marketingPercent, setMarketingPercent] = useState<number>(0);
   const [otherCosts, setOtherCosts] = useState<number>(2000);
   const [affiliatePercent, setAffiliatePercent] = useState<number>(0);
   const [isPreOrder, setIsPreOrder] = useState<boolean>(false);
+  
+  // Shopee Optional Fees
+  const [usePromoXtra, setUsePromoXtra] = useState<boolean>(false);
+  const [useGratisOngkirXtra, setUseGratisOngkirXtra] = useState<boolean>(false);
+
+  // Tiktok Optional Fees
+  const [useKomisiDinamis, setUseKomisiDinamis] = useState<boolean>(false);
+  const [useCashbackBonus, setUseCashbackBonus] = useState<boolean>(false);
 
   // Update admin fee when platform, sellerType, or category changes
   useEffect(() => {
@@ -92,6 +100,10 @@ const Calculator: React.FC = () => {
     marketingAmount: 0,
     affiliateAmount: 0,
     preOrderAmount: 0,
+    promoXtraAmount: 0,
+    gratisOngkirXtraAmount: 0,
+    komisiDinamisAmount: 0,
+    cashbackBonusAmount: 0,
     totalCosts: 0,
     netProfit: 0,
     margin: 0,
@@ -109,7 +121,15 @@ const Calculator: React.FC = () => {
     const affiliateAmount = (sellingPrice * affiliatePercent) / 100;
     const preOrderAmount = (isPreOrder && platform !== 'manual') ? (sellingPrice * 3) / 100 : 0;
     
-    const totalCosts = cogs + totalAdminCost + marketingAmount + affiliateAmount + preOrderAmount + otherCosts;
+    // Shopee Optional Fees
+    const promoXtraAmount = (platform === 'shopee' && usePromoXtra) ? (sellingPrice * 4.5) / 100 : 0;
+    const gratisOngkirXtraAmount = (platform === 'shopee' && useGratisOngkirXtra) ? (sellingPrice * 5.5) / 100 : 0;
+    
+    // Tiktok Optional Fees
+    const komisiDinamisAmount = (platform === 'tiktok' && useKomisiDinamis) ? (sellingPrice * 5.5) / 100 : 0;
+    const cashbackBonusAmount = (platform === 'tiktok' && useCashbackBonus) ? (sellingPrice * 3.5) / 100 : 0;
+    
+    const totalCosts = cogs + totalAdminCost + marketingAmount + affiliateAmount + preOrderAmount + promoXtraAmount + gratisOngkirXtraAmount + komisiDinamisAmount + cashbackBonusAmount + otherCosts;
     const netProfit = sellingPrice - totalCosts;
     const margin = sellingPrice > 0 ? (netProfit / sellingPrice) * 100 : 0;
     const roi = cogs > 0 ? (netProfit / cogs) * 100 : 0;
@@ -121,12 +141,16 @@ const Calculator: React.FC = () => {
       marketingAmount,
       affiliateAmount,
       preOrderAmount,
+      promoXtraAmount,
+      gratisOngkirXtraAmount,
+      komisiDinamisAmount,
+      cashbackBonusAmount,
       totalCosts,
       netProfit,
       margin,
       roi
     });
-  }, [sellingPrice, cogs, adminFeePercent, serviceFeePercent, fixedFee, marketingPercent, otherCosts, affiliatePercent, isPreOrder, platform]);
+  }, [sellingPrice, cogs, adminFeePercent, serviceFeePercent, fixedFee, marketingPercent, otherCosts, affiliatePercent, isPreOrder, platform, usePromoXtra, useGratisOngkirXtra, useKomisiDinamis, useCashbackBonus]);
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -169,8 +193,8 @@ const Calculator: React.FC = () => {
             <div className="space-y-4 sm:space-y-6">
               <div className="p-3 sm:p-4 bg-yellow-50 rounded-2xl border border-yellow-100 mb-4 sm:mb-6">
                 <label className="block text-[10px] sm:text-sm font-black text-yellow-800 mb-2 sm:mb-3 uppercase tracking-wider">Pilih Marketplace</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['manual', 'shopee', 'tiktok'].map((p) => (
+                <div className="grid grid-cols-2 gap-2">
+                  {['shopee', 'tiktok'].map((p) => (
                     <button
                       key={p}
                       onClick={() => {
@@ -184,7 +208,7 @@ const Calculator: React.FC = () => {
                           : 'bg-white border-slate-200 text-slate-500 hover:border-yellow-200'
                       }`}
                     >
-                      {p === 'manual' ? 'Custom' : p}
+                      {p}
                     </button>
                   ))}
                 </div>
@@ -354,6 +378,90 @@ const Calculator: React.FC = () => {
                 </button>
               </div>
 
+              {platform === 'shopee' && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between bg-orange-50 p-4 rounded-2xl border border-orange-100">
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-bold text-orange-800">Layanan Promo Xtra?</span>
+                      <span className="text-[10px] text-orange-600">Biaya layanan 4.5%</span>
+                    </div>
+                    <button
+                      onClick={() => setUsePromoXtra(!usePromoXtra)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                        usePromoXtra ? 'bg-orange-500' : 'bg-slate-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          usePromoXtra ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-bold text-blue-800">Gratis Ongkir Xtra?</span>
+                      <span className="text-[10px] text-blue-600">Biaya layanan 5.5% (Kategori G)</span>
+                    </div>
+                    <button
+                      onClick={() => setUseGratisOngkirXtra(!useGratisOngkirXtra)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                        useGratisOngkirXtra ? 'bg-blue-500' : 'bg-slate-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          useGratisOngkirXtra ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {platform === 'tiktok' && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between bg-fuchsia-50 p-4 rounded-2xl border border-fuchsia-100">
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-bold text-fuchsia-800">Komisi Dinamis?</span>
+                      <span className="text-[10px] text-fuchsia-600">Biaya layanan 5.5%</span>
+                    </div>
+                    <button
+                      onClick={() => setUseKomisiDinamis(!useKomisiDinamis)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                        useKomisiDinamis ? 'bg-fuchsia-500' : 'bg-slate-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          useKomisiDinamis ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between bg-violet-50 p-4 rounded-2xl border border-violet-100">
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-bold text-violet-800">Cashback Bonus?</span>
+                      <span className="text-[10px] text-violet-600">Biaya layanan 3.5%</span>
+                    </div>
+                    <button
+                      onClick={() => setUseCashbackBonus(!useCashbackBonus)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                        useCashbackBonus ? 'bg-violet-500' : 'bg-slate-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          useCashbackBonus ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
 
@@ -415,6 +523,30 @@ const Calculator: React.FC = () => {
                   <div className="flex justify-between items-center text-yellow-500">
                     <span className="font-bold">Biaya Pre-Order (3%)</span>
                     <span className="font-black">{formatCurrency(results.preOrderAmount)}</span>
+                  </div>
+                )}
+                {results.promoXtraAmount > 0 && (
+                  <div className="flex justify-between items-center text-orange-500">
+                    <span className="font-bold">Promo Xtra (4.5%)</span>
+                    <span className="font-black">{formatCurrency(results.promoXtraAmount)}</span>
+                  </div>
+                )}
+                {results.gratisOngkirXtraAmount > 0 && (
+                  <div className="flex justify-between items-center text-blue-500">
+                    <span className="font-bold">Gratis Ongkir Xtra (5.5%)</span>
+                    <span className="font-black">{formatCurrency(results.gratisOngkirXtraAmount)}</span>
+                  </div>
+                )}
+                {results.komisiDinamisAmount > 0 && (
+                  <div className="flex justify-between items-center text-fuchsia-500">
+                    <span className="font-bold">Komisi Dinamis (5.5%)</span>
+                    <span className="font-black">{formatCurrency(results.komisiDinamisAmount)}</span>
+                  </div>
+                )}
+                {results.cashbackBonusAmount > 0 && (
+                  <div className="flex justify-between items-center text-violet-500">
+                    <span className="font-bold">Cashback Bonus (3.5%)</span>
+                    <span className="font-black">{formatCurrency(results.cashbackBonusAmount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-2">
