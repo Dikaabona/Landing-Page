@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, PenTool, Send, Image as ImageIcon, AlignLeft, Edit, Trash2, Plus, ArrowLeft } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { supabase } from '../lib/supabase';
 import { convertDriveUrl } from '../lib/utils';
 
@@ -16,6 +18,23 @@ const AdminArticle: React.FC = () => {
   const [content, setContent] = useState('');
   const [image, setImage] = useState('');
   
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'link', 'image'
+  ];
+
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -311,13 +330,41 @@ const AdminArticle: React.FC = () => {
 
                 <div>
                   <label className="text-sm font-bold text-slate-700 mb-2 uppercase tracking-widest block">Konten Artikel</label>
-                  <textarea 
-                    required
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className="w-full px-6 py-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-yellow-500 focus:bg-white outline-none transition-all font-medium text-slate-700 min-h-[400px] leading-relaxed"
-                    placeholder="Tulis seluruh isi artikel di sini..."
-                  />
+                  <div className="bg-slate-50 rounded-2xl overflow-hidden border-2 border-transparent focus-within:border-yellow-500 focus-within:bg-white transition-all">
+                    <ReactQuill 
+                      theme="snow"
+                      value={content}
+                      onChange={setContent}
+                      modules={modules}
+                      formats={formats}
+                      className="min-h-[400px] font-medium text-slate-700"
+                      placeholder="Tulis seluruh isi artikel di sini..."
+                    />
+                  </div>
+                  <style>{`
+                    .quill {
+                      border: none !important;
+                    }
+                    .ql-toolbar {
+                      border: none !important;
+                      border-bottom: 1px solid #f1f5f9 !important;
+                      background: #f8fafc;
+                    }
+                    .ql-container {
+                      border: none !important;
+                      font-family: 'Inter', sans-serif !important;
+                      font-size: 1rem !important;
+                    }
+                    .ql-editor {
+                      min-height: 400px;
+                      padding: 1.5rem !important;
+                    }
+                    .ql-editor.ql-blank::before {
+                      left: 1.5rem !important;
+                      color: #94a3b8 !important;
+                      font-style: normal !important;
+                    }
+                  `}</style>
                 </div>
               </div>
 

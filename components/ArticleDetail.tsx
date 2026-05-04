@@ -117,11 +117,10 @@ const ArticleDetail: React.FC = () => {
           </div>
         )}
 
-        <div className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900">
-          {article.content.split('\n').map((para, i) => (
-            <p key={i} className="mb-6 whitespace-pre-wrap">{para}</p>
-          ))}
-        </div>
+        <div 
+          className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-3xl prose-img:shadow-lg"
+          dangerouslySetInnerHTML={{ __html: article.content }}
+        />
 
         <footer className="mt-20 pt-12 border-t border-slate-100">
           <div className="bg-slate-900 rounded-[32px] p-8 sm:p-12 text-center text-white relative overflow-hidden">
