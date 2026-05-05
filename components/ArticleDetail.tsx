@@ -70,8 +70,8 @@ const ArticleDetail: React.FC = () => {
   }
 
   return (
-    <article className="pt-32 pb-24 bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <article className="pt-32 pb-24 bg-white overflow-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full overflow-hidden">
         <Link to="/articles" className="inline-flex items-center gap-2 text-slate-400 font-bold hover:text-slate-900 transition-colors mb-12 uppercase tracking-widest text-xs">
           <ArrowLeft size={16} className="text-yellow-500" /> Kembali
         </Link>
@@ -118,7 +118,7 @@ const ArticleDetail: React.FC = () => {
         )}
 
         <div 
-          className="prose prose-slate prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-3xl prose-img:shadow-lg"
+          className="prose prose-slate prose-lg max-w-full article-content prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-3xl prose-img:shadow-lg"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 

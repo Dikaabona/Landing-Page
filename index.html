@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visibel Agency | Digital Growth Partner</title>
     <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/13enH1ZFO2eucK1retpymOp_qis9F8CY9">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -77,6 +77,18 @@
           background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
           animation: shine 0.8s ease-in-out forwards;
           z-index: 5;
+        }
+
+        .article-content {
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          word-break: break-word;
+        }
+
+        .article-content img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 1.5rem;
         }
     </style>
     <script type="importmap">
