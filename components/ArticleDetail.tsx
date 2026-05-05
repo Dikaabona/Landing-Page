@@ -70,44 +70,44 @@ const ArticleDetail: React.FC = () => {
   }
 
   return (
-    <article className="pt-32 pb-24 bg-white overflow-hidden">
+    <article className="pt-24 sm:pt-32 pb-24 bg-white overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full overflow-hidden">
-        <Link to="/articles" className="inline-flex items-center gap-2 text-slate-400 font-bold hover:text-slate-900 transition-colors mb-12 uppercase tracking-widest text-xs">
+        <Link to="/articles" className="inline-flex items-center gap-2 text-slate-400 font-bold hover:text-slate-900 transition-colors mb-8 sm:mb-12 uppercase tracking-widest text-[10px] sm:text-xs">
           <ArrowLeft size={16} className="text-yellow-500" /> Kembali
         </Link>
 
-        <header className="mb-12">
-          <h1 className="text-4xl sm:text-6xl font-black text-slate-900 mb-8 leading-[1.1] tracking-tight">
+        <header className="mb-10 sm:mb-12">
+          <h1 className="text-3xl sm:text-6xl font-black text-slate-900 mb-6 sm:mb-8 leading-[1.1] tracking-tight">
             {article.title}
           </h1>
           
-          <div className="flex flex-wrap items-center gap-6 py-8 border-y border-slate-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center text-slate-900">
-                <User size={20} />
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 py-6 sm:py-8 border-y border-slate-100">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-yellow-500 flex items-center justify-center text-slate-900">
+                <User size={16} className="sm:w-5 sm:h-5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Penulis</span>
-                <span className="text-slate-900 font-bold">{article.author}</span>
+                <span className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">Penulis</span>
+                <span className="text-slate-900 font-bold text-xs sm:text-base">{article.author}</span>
               </div>
             </div>
             
             <div className="flex flex-col">
-              <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Diterbitkan</span>
-              <span className="text-slate-900 font-bold flex items-center gap-2">
+              <span className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">Diterbitkan</span>
+              <span className="text-slate-900 font-bold flex items-center gap-2 text-xs sm:text-base">
                 <Calendar size={14} className="text-yellow-500" />
                 {new Date(article.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
             </div>
 
-            <button className="ml-auto p-4 rounded-2xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors">
-              <Share2 size={20} />
+            <button className="ml-auto p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors">
+              <Share2 size={18} className="sm:w-5 sm:h-5" />
             </button>
           </div>
         </header>
 
         {article.image && (
-          <div className="aspect-[21/9] rounded-[40px] overflow-hidden mb-16 shadow-2xl">
+          <div className="aspect-video sm:aspect-[21/9] rounded-2xl sm:rounded-[40px] overflow-hidden mb-12 sm:mb-16 shadow-2xl">
             <img 
               src={convertDriveUrl(article.image)} 
               alt="" 
@@ -118,7 +118,7 @@ const ArticleDetail: React.FC = () => {
         )}
 
         <div 
-          className="prose prose-slate prose-lg max-w-full article-content prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-3xl prose-img:shadow-lg"
+          className="prose prose-slate sm:prose-lg max-w-full article-content prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-3xl prose-img:shadow-lg"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 

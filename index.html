@@ -83,6 +83,27 @@
           overflow-wrap: break-word;
           word-wrap: break-word;
           word-break: break-word;
+          -webkit-hyphens: auto;
+          -ms-hyphens: auto;
+          hyphens: auto;
+          text-align: justify;
+          text-justify: inter-word;
+          line-height: 1.6;
+        }
+
+        @media (max-width: 640px) {
+          .article-content {
+            text-align: left; /* Better for very narrow screens */
+            hyphens: none;
+          }
+          
+          .prose {
+            font-size: 15px !important;
+          }
+
+          .prose h1 { font-size: 1.75rem !important; }
+          .prose h2 { font-size: 1.5rem !important; }
+          .prose h3 { font-size: 1.25rem !important; }
         }
 
         .article-content img {
