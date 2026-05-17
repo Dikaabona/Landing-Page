@@ -44,7 +44,7 @@ const Clients: React.FC = () => {
         <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-white to-transparent z-10"></div>
         <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-white to-transparent z-10"></div>
         
-        <div className="flex animate-scroll whitespace-nowrap gap-16 md:gap-32 items-center">
+        <div className="flex animate-scroll whitespace-nowrap gap-20 md:gap-40 items-center">
           {duplicatedLogos.map((logo, idx) => (
             <div 
               key={idx} 
@@ -53,7 +53,7 @@ const Clients: React.FC = () => {
               <img 
                 src={`https://lh3.googleusercontent.com/d/${logo.id}`} 
                 alt={logo.name} 
-                className="h-[45px] sm:h-[60px] w-auto object-contain"
+                className="h-[55px] sm:h-[80px] w-auto object-contain"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
