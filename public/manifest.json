@@ -1,0 +1,26 @@
+{
+  "short_name": "Visibel",
+  "name": "Visibel Agency | Digital Growth Partner",
+  "description": "Digital Growth Partner untuk Meluaskan Bisnis Anda",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#eab308",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://lh3.googleusercontent.com/d/13enH1ZFO2eucK1retpymOp_qis9F8CY9",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/13enH1ZFO2eucK1retpymOp_qis9F8CY9",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

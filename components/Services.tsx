@@ -42,8 +42,8 @@ const Services: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto mb-16">
           <h2 className="text-yellow-500 font-bold tracking-widest uppercase text-sm mb-4">LAYANAN UNGGULAN KAMI</h2>
-          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 mb-8 leading-tight px-4">Solusi All-in-One Untuk Pertumbuhan Digital Anda</h3>
-          <p className="text-lg sm:text-xl text-slate-500 leading-relaxed max-w-3xl mx-auto">
+          <h3 className="text-[24px] sm:text-4xl md:text-5xl font-[900] text-slate-900 mb-6 sm:mb-8 leading-tight px-4">Solusi All-in-One Untuk Pertumbuhan Digital Anda</h3>
+          <p className="text-sm sm:text-lg md:text-xl text-slate-500 leading-relaxed max-w-3xl mx-auto px-4">
             Kami menyediakan strategi end-to-end mulai dari produksi konten hingga optimasi penjualan langsung di marketplace.
           </p>
         </div>

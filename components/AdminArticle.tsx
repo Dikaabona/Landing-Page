@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, PenTool, Send, Image as ImageIcon, AlignLeft, Edit, Trash2, Plus, ArrowLeft } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
@@ -17,6 +17,10 @@ const AdminArticle: React.FC = () => {
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState('');
+  
+  const [imageMode, setImageMode] = useState<'upload' | 'url'>('upload');
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const modules = {
     toolbar: [
@@ -40,6 +44,77 @@ const AdminArticle: React.FC = () => {
   const [error, setError] = useState('');
   
   const navigate = useNavigate();
+
+  const processImageFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const targetWidth = 1200;
+        const targetHeight = 675;
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          // Center crop algorithm to 16:9 Widescreen aspect ratio
+          const targetRatio = targetWidth / targetHeight;
+          const imgRatio = img.width / img.height;
+          
+          let sourceWidth = img.width;
+          let sourceHeight = img.height;
+          let sourceX = 0;
+          let sourceY = 0;
+          
+          if (imgRatio > targetRatio) {
+            // Image is wider than 16:9, crop left & right borders
+            sourceWidth = img.height * targetRatio;
+            sourceX = (img.width - sourceWidth) / 2;
+          } else {
+            // Image is taller than 16:9, crop top & bottom borders
+            sourceHeight = img.width / targetRatio;
+            sourceY = (img.height - sourceHeight) / 2;
+          }
+          
+          // Clear canvas then draw the cropped image
+          ctx.clearRect(0, 0, targetWidth, targetHeight);
+          ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, targetWidth, targetHeight);
+          
+          // Export as highly-optimized base64
+          const base64Url = canvas.toDataURL('image/jpeg', 0.85);
+          setImage(base64Url);
+          setImageMode('upload');
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processImageFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      processImageFile(e.target.files[0]);
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -306,15 +381,176 @@ const AdminArticle: React.FC = () => {
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-bold text-slate-700 mb-2 uppercase tracking-widest">
-                    <ImageIcon size={16} className="text-yellow-500" /> URL Gambar Cover
+                    <ImageIcon size={16} className="text-yellow-500" /> Gambar Cover Artikel (Rasio Widescreen 16:9, Output 1200px x 675px)
                   </label>
-                  <input 
-                    type="url" 
-                    value={image}
-                    onChange={(e) => setImage(e.target.value)}
-                    className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-yellow-500 focus:bg-white outline-none transition-all font-bold text-slate-600"
-                    placeholder="https://images.unsplash.com/..."
-                  />
+                  
+                  {/* Tabs options for image upload */}
+                  <div className="flex gap-2 p-1 bg-slate-100 rounded-xl mb-4 max-w-sm">
+                    <button
+                      type="button"
+                      onClick={() => setImageMode('upload')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                        imageMode === 'upload' 
+                          ? 'bg-white text-slate-900 shadow-sm' 
+                          : 'text-slate-400 hover:text-slate-600'
+                      }`}
+                    >
+                      Upload File
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageMode('url')}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                        imageMode === 'url' 
+                          ? 'bg-white text-slate-900 shadow-sm' 
+                          : 'text-slate-400 hover:text-slate-600'
+                      }`}
+                    >
+                      Input URL Manual
+                    </button>
+                  </div>
+
+                  {imageMode === 'upload' ? (
+                    <div 
+                      onDragEnter={handleDrag}
+                      onDragOver={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDrop={handleDrop}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-[32px] p-8 text-center cursor-pointer transition-all duration-300 ${
+                        dragActive 
+                          ? 'border-yellow-500 bg-yellow-50/30' 
+                          : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-300'
+                      }`}
+                    >
+                      <input 
+                        ref={fileInputRef}
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                      
+                      {image && (image.startsWith('data:image') || image.startsWith('blob:')) ? (
+                        <div className="space-y-4 w-full flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                          <div className="relative group/thumb w-full max-w-sm">
+                            <img 
+                              src={image} 
+                              alt="Cover Preview" 
+                              className="w-full aspect-video rounded-2xl object-cover border border-slate-150 shadow-md"
+                            />
+                            <div className="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
+                              <span className="text-white text-xs font-black uppercase tracking-widest bg-slate-900/80 px-3 py-1.5 rounded-lg text-[10px]">1200 x 675 px</span>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs font-bold text-emerald-600 flex items-center justify-center gap-1">
+                              ✓ Gambar siap di-upload (Format 16:9 - 1200x675)
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  fileInputRef.current?.click();
+                              }}
+                              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all border border-slate-200"
+                            >
+                              Ganti Gambar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setImage('');
+                              }}
+                              className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        </div>
+                      ) : image ? (
+                        /* If there's an existing non-base64 external image (e.g. standard edit load or URL input mode) */
+                        <div className="space-y-4 w-full flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                          <div className="relative group/thumb w-full max-w-sm">
+                            <img 
+                              src={convertDriveUrl(image)} 
+                              alt="Cover Preview" 
+                              className="w-full aspect-video rounded-2xl object-cover border border-slate-150 shadow-md"
+                              referrerPolicy="no-referrer"
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                fileInputRef.current?.click();
+                              }}
+                              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all border border-slate-200"
+                            >
+                              Upload File Baru
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setImage('');
+                              }}
+                              className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="mx-auto w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-slate-400">
+                            <ImageIcon size={28} className="text-slate-400" />
+                          </div>
+                          <div>
+                            <p className="text-base font-black text-slate-800">Tarik & Lepas gambar di sini, atau <span className="text-yellow-600 underline">pilih file</span></p>
+                            <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Rekomendasi ukuran: 1200px x 675px (Rasio 16:9 - Otomatis Di-Crop &amp; Resize)</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <input 
+                        type="url" 
+                        value={image}
+                        onChange={(e) => setImage(e.target.value)}
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-yellow-500 focus:bg-white outline-none transition-all font-bold text-slate-600"
+                        placeholder="Contoh: https://images.unsplash.com/..."
+                      />
+                      <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+                        ⚠️ Harap gunakan URL gambar publik yang valid (contoh: Unsplash). Hindari URL Google Drive karena rentan diblokir/gagal termuat.
+                      </p>
+                      {image && (
+                        <div className="mt-4 flex flex-col items-center">
+                          <img 
+                            src={convertDriveUrl(image)} 
+                            alt="URL Preview" 
+                            className="w-full aspect-video max-w-sm rounded-2xl object-cover border border-slate-200 shadow-sm"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800';
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setImage('')}
+                            className="mt-2 px-4 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all"
+                          >
+                            Hapus URL
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div>

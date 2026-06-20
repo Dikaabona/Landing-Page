@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#0f172a] text-white pt-24 pb-12 overflow-hidden">
+    <footer className="bg-black text-white pt-24 pb-12 overflow-hidden border-t border-neutral-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-20">
           

@@ -7,6 +7,7 @@ import PriceList from './components/PriceList';
 import LiveStreamingResult from './components/LiveStreamingResult';
 import LivestreamSetup from './components/LivestreamSetup';
 import ShortVideos from './components/ShortVideos';
+import GraphicDesignPortfolio from './components/GraphicDesignPortfolio';
 import Features from './components/Features';
 import Clients from './components/Clients';
 import VisiMisi from './components/VisiMisi';
@@ -22,6 +23,7 @@ const Home: React.FC = () => {
       <LiveStreamingResult />
       <LivestreamSetup />
       <ShortVideos />
+      <GraphicDesignPortfolio />
       <Features />
       <Clients />
       <VisiMisi />

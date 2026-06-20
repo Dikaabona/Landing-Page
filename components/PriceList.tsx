@@ -52,7 +52,7 @@ const PriceList: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">PAKET HARGA & INVESTASI</h2>
-          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">Investasikan Pertumbuhan Brand Anda</h3>
+          <h3 className="text-[24px] sm:text-4xl md:text-5xl font-[900] text-slate-900 leading-tight">Investasikan Pertumbuhan Brand Anda</h3>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 items-stretch">

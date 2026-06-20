@@ -71,7 +71,7 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <article className="pt-24 sm:pt-32 pb-24 bg-white overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 w-full">
         <Link to="/articles" className="inline-flex items-center gap-2 text-slate-400 font-bold hover:text-slate-900 transition-colors mb-8 sm:mb-12 uppercase tracking-widest text-[10px] sm:text-xs">
           <ArrowLeft size={16} className="text-yellow-500" /> Kembali
         </Link>
@@ -107,7 +107,7 @@ const ArticleDetail: React.FC = () => {
         </header>
 
         {article.image && (
-          <div className="aspect-video sm:aspect-[21/9] rounded-2xl sm:rounded-[40px] overflow-hidden mb-12 sm:mb-16 shadow-2xl">
+          <div className="aspect-video rounded-2xl sm:rounded-[40px] overflow-hidden mb-12 sm:mb-16 shadow-2xl">
             <img 
               src={convertDriveUrl(article.image)} 
               alt="" 

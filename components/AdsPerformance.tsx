@@ -4,9 +4,9 @@ import { ChevronDown, TrendingUp, Users, DollarSign, UserCheck } from 'lucide-re
 
 const AdsPerformance: React.FC = () => {
   return (
-    <section className="relative z-20 pt-0 pb-24 px-4 bg-slate-50/30">
+    <section className="relative z-20 pt-16 sm:pt-24 pb-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           {/* Section Title */}
           <h2 className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">Our Performance in 2025</h2>
         </div>

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visibel Agency | Digital Growth Partner</title>
     <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/13enH1ZFO2eucK1retpymOp_qis9F8CY9">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#eab308">
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -80,21 +82,33 @@
         }
 
         .article-content {
-          overflow-wrap: break-word;
-          word-wrap: break-word;
-          word-break: break-word;
-          -webkit-hyphens: auto;
-          -ms-hyphens: auto;
-          hyphens: auto;
-          text-align: justify;
-          text-justify: inter-word;
-          line-height: 1.6;
+          line-height: 1.8;
         }
 
-        @media (max-width: 640px) {
-          .article-content {
-            text-align: left; /* Better for very narrow screens */
-            hyphens: none;
+        .article-content,
+        .article-content *,
+        .prose,
+        .prose * {
+          word-break: normal !important;
+          word-wrap: break-word !important;
+          overflow-wrap: break-word !important;
+          white-space: normal !important;
+          -webkit-hyphens: none !important;
+          -moz-hyphens: none !important;
+          -ms-hyphens: none !important;
+          hyphens: none !important;
+          text-align: justify !important;
+          text-justify: inter-word !important;
+        }
+
+        @media (max-width: 768px) {
+          .article-content,
+          .article-content *,
+          .prose,
+          .prose * {
+            text-align: left !important;
+            text-justify: none !important;
+            word-break: normal !important;
           }
           
           .prose {

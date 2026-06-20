@@ -29,7 +29,7 @@ const Testimonials: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-yellow-600 font-bold tracking-wider uppercase text-sm mb-4">Testimonial</h2>
-          <h3 className="text-3xl font-extrabold text-slate-900">Apa Kata Mereka Tentang Kami?</h3>
+          <h3 className="text-[24px] sm:text-3xl font-extrabold text-slate-900 px-4">Apa Kata Mereka Tentang Kami?</h3>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
