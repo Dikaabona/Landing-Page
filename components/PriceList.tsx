@@ -7,7 +7,7 @@ const PriceList: React.FC = () => {
 
   const plans = [
     {
-      price: "LiveStream",
+      price: "Live Streaming",
       amount: "9.000.000",
       features: [
         "100 jam live streaming / bulan",
@@ -20,7 +20,7 @@ const PriceList: React.FC = () => {
       recommended: true 
     },
     {
-      price: "ShortVideo",
+      price: "Short Video",
       amount: "6.000.000",
       features: [
         "30 short video / bulan",
@@ -34,7 +34,7 @@ const PriceList: React.FC = () => {
       recommended: true 
     },
     {
-      price: "Ads Management",
+      price: "Tiktok Ads Service",
       amount: "2.500.000",
       features: [
         "Min Subscribe 3 bulan",
@@ -42,6 +42,18 @@ const PriceList: React.FC = () => {
         "Manage Shop Tab",
         "Weekly Report",
         "Account Manager"
+      ],
+      recommended: false
+    },
+    {
+      price: "Paket Enterprise",
+      amount: "Custom Pricing",
+      features: [
+        "Custom jam live streaming",
+        "Custom qty short video",
+        "Full production strategy",
+        "Dedicated Team & Account Manager",
+        "Customized reports & analytics"
       ],
       recommended: false
     }
@@ -79,7 +91,7 @@ const PriceList: React.FC = () => {
                 </span>
                 {plan.amount && (
                   <span className="font-black text-slate-600 text-base sm:text-xl">
-                    Rp {plan.amount}
+                    {isNaN(Number(plan.amount.replace(/\./g, ''))) ? plan.amount : `Rp ${plan.amount}`}
                   </span>
                 )}
               </div>
