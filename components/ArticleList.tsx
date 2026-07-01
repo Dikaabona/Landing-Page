@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Calendar, ChevronRight, BookOpen, ChevronLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { convertDriveUrl } from '../lib/utils';
+import { useLanguage } from './LanguageContext';
 
 interface Article {
   id: string;
@@ -16,6 +17,7 @@ interface Article {
 }
 
 const ArticleList: React.FC = () => {
+  const { language } = useLanguage();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,14 +77,18 @@ const ArticleList: React.FC = () => {
           <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-[10px] sm:text-sm mb-3 sm:mb-4">INSIGHTS & UPDATES</h2>
           <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">Visibel Article</h3>
           <p className="mt-4 text-slate-500 max-w-2xl mx-auto font-medium text-sm sm:text-base px-4">
-            Temukan tips, trik, dan berita terbaru seputar dunia marketplace dan strategi digital marketing.
+            {language === 'en'
+              ? 'Discover the latest tips, tricks, and news about the marketplace world and digital marketing strategy.'
+              : 'Temukan tips, trik, dan berita terbaru seputar dunia marketplace dan strategi digital marketing.'}
           </p>
         </div>
 
         {articles.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-[32px] border-2 border-dashed border-slate-200">
             <BookOpen className="mx-auto text-slate-300 mb-4" size={48} />
-            <p className="text-slate-500 font-bold">Belum ada artikel yang diterbitkan.</p>
+            <p className="text-slate-500 font-bold">
+              {language === 'en' ? 'No articles published yet.' : 'Belum ada artikel yang diterbitkan.'}
+            </p>
           </div>
         ) : (
           <>
@@ -97,13 +103,13 @@ const ArticleList: React.FC = () => {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-yellow-500 text-slate-900 text-[8px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full uppercase">
-                      Edukasi
+                      {language === 'en' ? 'Education' : 'Edukasi'}
                     </div>
                   </div>
                   <div className="p-3 sm:p-8 flex flex-col flex-1">
                     <div className="flex items-center gap-2 text-slate-400 text-[8px] sm:text-xs font-bold mb-2 sm:mb-4">
                       <Calendar size={12} className="text-yellow-500 sm:w-3.5 sm:h-3.5" />
-                      {new Date(article.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {new Date(article.created_at).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </div>
                     <h4 className="text-[13px] sm:text-xl font-black text-slate-900 mb-2 sm:mb-4 line-clamp-2 leading-tight group-hover:text-yellow-500 transition-colors">
                       {article.title}
@@ -116,8 +122,8 @@ const ArticleList: React.FC = () => {
                         to={`/article/${article.id}`}
                         className="flex items-center gap-1 sm:gap-2 text-slate-900 font-black text-[10px] sm:text-sm uppercase tracking-widest group/btn"
                       >
-                        <span className="sm:inline hidden">Selengkapnya</span>
-                        <span className="sm:hidden">Baca</span>
+                        <span className="sm:inline hidden">{language === 'en' ? 'Read More' : 'Selengkapnya'}</span>
+                        <span className="sm:hidden">{language === 'en' ? 'Read' : 'Baca'}</span>
                         <ChevronRight size={14} className="text-yellow-500 group-hover/btn:translate-x-1 transition-transform sm:w-4 sm:h-4" />
                       </Link>
                     </div>

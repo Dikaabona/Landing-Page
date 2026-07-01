@@ -1,14 +1,19 @@
 
 import React from 'react';
 import { ChevronDown, TrendingUp, Users, DollarSign, UserCheck } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const AdsPerformance: React.FC = () => {
+  const { language } = useLanguage();
+
   return (
     <section className="relative z-20 pt-16 sm:pt-24 pb-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           {/* Section Title */}
-          <h2 className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">Our Performance in 2025</h2>
+          <h2 className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">
+            {language === 'en' ? 'Our Performance in 2025' : 'Performa Kami di 2025'}
+          </h2>
         </div>
 
         {/* Updated grid: grid-cols-2 for mobile to make them "sejajar" */}
@@ -109,7 +114,9 @@ const AdsPerformance: React.FC = () => {
                     500 <span className="text-purple-500 ml-1 sm:ml-2 text-xl sm:text-3xl group-hover:scale-110 transition-transform">++</span>
                   </span>
                 </div>
-                <p className="text-slate-400 font-bold text-[8px] sm:text-sm mt-1 sm:mt-2 tracking-wide uppercase">Nano & Mikro Creator</p>
+                <p className="text-slate-400 font-bold text-[8px] sm:text-sm mt-1 sm:mt-2 tracking-wide uppercase">
+                  {language === 'en' ? 'Nano & Micro Creators' : 'Nano & Mikro Creator'}
+                </p>
               </div>
             </div>
           </div>

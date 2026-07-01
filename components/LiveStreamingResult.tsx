@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const LiveStreamingResult: React.FC = () => {
+  const { language } = useLanguage();
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -74,8 +76,10 @@ const LiveStreamingResult: React.FC = () => {
       <div className="max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-14 relative animate-fade-in">
         <div className="text-center mb-10 sm:mb-16">
           <h3 className="text-[24px] sm:text-5xl md:text-6xl font-[900] text-slate-900 leading-tight mb-4 sm:mb-8">Live Streaming Result</h3>
-          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4">
-            Bukti nyata keberhasilan kampanye live streaming kami dalam meningkatkan interaksi dan penjualan secara real-time.
+          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4 font-medium">
+            {language === 'en'
+              ? 'Real proof of our live streaming campaign success in boosting real-time engagement and sales.'
+              : 'Bukti nyata keberhasilan kampanye live streaming kami dalam meningkatkan interaksi dan penjualan secara real-time.'}
           </p>
         </div>
 

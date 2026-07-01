@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const LivestreamSetup: React.FC = () => {
+  const { language } = useLanguage();
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -78,8 +80,10 @@ const LivestreamSetup: React.FC = () => {
       <div className="max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-14 relative animate-fade-in">
         <div className="text-center mb-16">
           <h3 className="text-[24px] sm:text-5xl md:text-6xl font-[900] text-slate-900 leading-tight mb-4 sm:mb-8">Our Livestream Setup</h3>
-          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4">
-            Perangkat live streaming profesional dengan host berpengalaman dan komunikatif. Semua harga sudah termasuk host, operator, dan full setup tanpa biaya tambahan
+          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4 font-medium">
+            {language === 'en'
+              ? 'Professional live streaming setup with experienced and communicative hosts. All prices include hosts, operators, and full setup with no hidden fees.'
+              : 'Perangkat live streaming profesional dengan host berpengalaman dan komunikatif. Semua harga sudah termasuk host, operator, dan full setup tanpa biaya tambahan'}
           </p>
         </div>
 

@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { Send, FileText, Video, User, Mail, MapPin, Phone, DollarSign, Calendar, Briefcase, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from './LanguageContext';
 
 const CareerForm: React.FC = () => {
+  const { language } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -145,15 +147,19 @@ const CareerForm: React.FC = () => {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="text-green-500" size={40} />
           </div>
-          <h2 className="text-3xl font-black text-slate-900 mb-4">Lamaran Terkirim!</h2>
+          <h2 className="text-3xl font-black text-slate-900 mb-4">
+            {language === 'en' ? 'Application Sent!' : 'Lamaran Terkirim!'}
+          </h2>
           <p className="text-slate-600 mb-8 leading-relaxed">
-            Terima kasih telah melamar di Visibel Agency. Tim kami akan segera meninjau portfolio Anda dan menghubungi melalui WhatsApp jika Anda lolos ke tahap berikutnya.
+            {language === 'en'
+              ? 'Thank you for applying to Visibel Agency. Our team will review your portfolio shortly and contact you via WhatsApp if you proceed to the next stage.'
+              : 'Terima kasih telah melamar di Visibel Agency. Tim kami akan segera meninjau portfolio Anda dan menghubungi melalui WhatsApp jika Anda lolos ke tahap berikutnya.'}
           </p>
           <button 
             onClick={() => window.location.href = '/'}
             className="w-full bg-yellow-500 text-slate-900 py-4 rounded-2xl font-bold text-lg hover:bg-yellow-600 transition-all"
           >
-            Kembali ke Beranda
+            {language === 'en' ? 'Back to Home' : 'Kembali ke Beranda'}
           </button>
         </div>
       </div>
@@ -165,7 +171,8 @@ const CareerForm: React.FC = () => {
       <div className="max-w-3xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="text-center mb-6 sm:mb-12">
           <h1 className="text-2xl sm:text-5xl font-black text-slate-900 leading-tight">
-            Bergabung Bersama <span className="text-yellow-500">Visibel Agency</span>
+            {language === 'en' ? 'Join Us at ' : 'Bergabung Bersama '}
+            <span className="text-yellow-500">Visibel Agency</span>
           </h1>
         </div>
 
@@ -176,7 +183,9 @@ const CareerForm: React.FC = () => {
                 <CheckCircle2 size={24} className="rotate-180" />
               </div>
               <div>
-                <p className="text-red-700 font-black text-lg">Gagal mengirim lamaran.</p>
+                <p className="text-red-700 font-black text-lg">
+                  {language === 'en' ? 'Failed to submit application.' : 'Gagal mengirim lamaran.'}
+                </p>
                 <p className="text-red-600 text-xs font-bold leading-tight">{error}</p>
               </div>
             </div>
@@ -184,7 +193,7 @@ const CareerForm: React.FC = () => {
               onClick={() => setError(null)}
               className="bg-white/50 text-red-500 px-4 py-2 rounded-xl text-xs font-bold border border-red-200 hover:bg-white transition-all shadow-sm"
             >
-              Tutup
+              {language === 'en' ? 'Close' : 'Tutup'}
             </button>
           </div>
         )}
@@ -193,7 +202,7 @@ const CareerForm: React.FC = () => {
           <div className="bg-yellow-500 p-4 sm:p-6 text-slate-900">
             <p className="font-bold flex items-center justify-center text-sm sm:text-base">
               <FileText size={18} className="mr-2" />
-              Formulir Pendaftaran Karir
+              {language === 'en' ? 'Career Registration Form' : 'Formulir Pendaftaran Karir'}
             </p>
           </div>
           
@@ -202,12 +211,12 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <User size={14} className="mr-1.5 text-yellow-500" />
-                  Nama Lengkap
+                  {language === 'en' ? 'Full Name' : 'Nama Lengkap'}
                 </label>
                 <input 
                   required
                   type="text" 
-                  placeholder="Contoh: Budi Santoso"
+                  placeholder={language === 'en' ? 'e.g., John Doe' : 'Contoh: Budi Santoso'}
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.nama}
                   onChange={(e) => setFormData({...formData, nama: e.target.value})}
@@ -232,7 +241,7 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <Calendar size={14} className="mr-1.5 text-yellow-500" />
-                  Tempat Tanggal Lahir
+                  {language === 'en' ? 'Place & Date of Birth' : 'Tempat Tanggal Lahir'}
                 </label>
                 <input 
                   required
@@ -247,7 +256,7 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <Phone size={14} className="mr-1.5 text-yellow-500" />
-                  No HP / WhatsApp
+                  {language === 'en' ? 'Phone / WhatsApp Number' : 'No HP / WhatsApp'}
                 </label>
                 <input 
                   required
@@ -263,11 +272,11 @@ const CareerForm: React.FC = () => {
             <div className="space-y-1">
               <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                 <MapPin size={14} className="mr-1.5 text-yellow-500" />
-                Alamat Lengkap
+                {language === 'en' ? 'Full Address' : 'Alamat Lengkap'}
               </label>
               <textarea 
                 required
-                placeholder="Tuliskan alamat lengkap..."
+                placeholder={language === 'en' ? 'Write your full address...' : 'Tuliskan alamat lengkap...'}
                 rows={2}
                 className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900 resize-none"
                 value={formData.alamat}
@@ -279,12 +288,12 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <DollarSign size={14} className="mr-1.5 text-yellow-500" />
-                  Gaji yang Diharapkan
+                  {language === 'en' ? 'Expected Salary' : 'Gaji yang Diharapkan'}
                 </label>
                 <input 
                   required
                   type="text" 
-                  placeholder="Rp 2.000.000"
+                  placeholder={language === 'en' ? 'e.g. Rp 2.000.000' : 'Rp 2.000.000'}
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.gaji}
                   onChange={handleGajiChange}
@@ -294,7 +303,7 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <Briefcase size={14} className="mr-1.5 text-yellow-500" />
-                  Posisi yang Dilamar
+                  {language === 'en' ? 'Applied Position' : 'Posisi yang Dilamar'}
                 </label>
                 <select 
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900 appearance-none"
@@ -311,12 +320,13 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <Video size={14} className="mr-1.5 text-yellow-500" />
-                  Video Live Streaming (GDrive) {formData.posisi === 'Live streaming' && <span className="text-red-500 ml-1">(Wajib)</span>}
+                  {language === 'en' ? 'Live Streaming Video (GDrive) ' : 'Video Live Streaming (GDrive) '}
+                  {formData.posisi === 'Live streaming' && <span className="text-red-500 ml-1">{language === 'en' ? '(Required)' : '(Wajib)'}</span>}
                 </label>
                 <input 
                   required={formData.posisi === 'Live streaming'}
                   type="url" 
-                  placeholder={formData.posisi === 'Live streaming' ? "https://drive.google.com/..." : "Optional"}
+                  placeholder={formData.posisi === 'Live streaming' ? "https://drive.google.com/..." : (language === 'en' ? 'Optional' : 'Optional')}
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.videoLink}
                   onChange={(e) => setFormData({...formData, videoLink: e.target.value})}
@@ -326,12 +336,13 @@ const CareerForm: React.FC = () => {
               <div className="space-y-1">
                 <label className="flex items-center text-[11px] sm:text-sm font-bold text-slate-700">
                   <FileText size={14} className="mr-1.5 text-yellow-500" />
-                  Link Portfolio (GDrive) {formData.posisi === 'Content creator' && <span className="text-red-500 ml-1">(Wajib)</span>}
+                  {language === 'en' ? 'Portfolio Link (GDrive) ' : 'Link Portfolio (GDrive) '}
+                  {formData.posisi === 'Content creator' && <span className="text-red-500 ml-1">{language === 'en' ? '(Required)' : '(Wajib)'}</span>}
                 </label>
                 <input 
                   required={formData.posisi === 'Content creator'}
                   type="url" 
-                  placeholder={formData.posisi === 'Content creator' ? "https://drive.google.com/..." : "Optional"}
+                  placeholder={formData.posisi === 'Content creator' ? "https://drive.google.com/..." : (language === 'en' ? 'Optional' : 'Optional')}
                   className="w-full px-4 py-2.5 sm:px-5 sm:py-3.5 bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none focus:bg-white transition-all text-xs sm:text-base text-slate-900"
                   value={formData.portfolioLink}
                   onChange={(e) => setFormData({...formData, portfolioLink: e.target.value})}
@@ -348,7 +359,7 @@ const CareerForm: React.FC = () => {
                 <div className="w-5 h-5 border-3 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  Kirim Lamaran
+                  {language === 'en' ? 'Submit Application' : 'Kirim Lamaran'}
                   <Send className="ml-2 sm:ml-3 group-hover:translate-x-1 transition-transform" size={16} />
                 </>
               )}

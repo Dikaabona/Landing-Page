@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Calculator as CalcIcon, TrendingUp, DollarSign, Percent } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const FEES_DATA: any = {
   shopee: {
@@ -52,6 +53,7 @@ const FEES_DATA: any = {
 };
 
 const Calculator: React.FC = () => {
+  const { language } = useLanguage();
   const [platform, setPlatform] = useState<string>('shopee');
   const [sellerType, setSellerType] = useState<string>('');
   const [category, setCategory] = useState<string>('');
@@ -175,10 +177,16 @@ const Calculator: React.FC = () => {
     <section id="calculator" className="pt-32 pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">TOKO TOOLS</h2>
-          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">Kalkulator Profit Marketplace</h3>
-          <p className="mt-4 text-slate-500 max-w-2xl mx-auto">
-            Hitung perkiraan keuntungan bersih jualan Anda setelah dipotong biaya admin marketplace, modal, dan biaya operasional lainnya.
+          <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">
+            {language === 'en' ? 'MARKETPLACE TOOLS' : 'TOKO TOOLS'}
+          </h2>
+          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">
+            {language === 'en' ? 'Marketplace Profit Calculator' : 'Kalkulator Profit Marketplace'}
+          </h3>
+          <p className="mt-4 text-slate-500 max-w-2xl mx-auto font-medium">
+            {language === 'en' 
+              ? 'Calculate your estimated net profit after marketplace admin fees, COGS, and other operational expenses.' 
+              : 'Hitung perkiraan keuntungan bersih jualan Anda setelah dipotong biaya admin marketplace, modal, dan biaya operasional lainnya.'}
           </p>
         </div>
 
@@ -187,12 +195,14 @@ const Calculator: React.FC = () => {
           <div className="bg-slate-50 p-6 sm:p-10 rounded-[32px] border border-slate-100 shadow-sm">
             <h4 className="text-xl font-bold text-slate-900 mb-8 flex items-center gap-2">
               <CalcIcon className="text-yellow-500" size={24} />
-              Input Penjualan
+              {language === 'en' ? 'Sales Inputs' : 'Input Penjualan'}
             </h4>
 
             <div className="space-y-4 sm:space-y-6">
               <div className="p-3 sm:p-4 bg-yellow-50 rounded-2xl border border-yellow-100 mb-4 sm:mb-6">
-                <label className="block text-[10px] sm:text-sm font-black text-yellow-800 mb-2 sm:mb-3 uppercase tracking-wider">Pilih Marketplace</label>
+                <label className="block text-[10px] sm:text-sm font-black text-yellow-800 mb-2 sm:mb-3 uppercase tracking-wider">
+                  {language === 'en' ? 'Select Marketplace' : 'Pilih Marketplace'}
+                </label>
                 <div className="grid grid-cols-2 gap-2">
                   {['shopee', 'tiktok'].map((p) => (
                     <button
@@ -217,7 +227,9 @@ const Calculator: React.FC = () => {
               {(platform === 'shopee' || platform === 'tiktok') && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Tipe Seller</label>
+                    <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                      {language === 'en' ? 'Seller Type' : 'Tipe Seller'}
+                    </label>
                     <select
                       value={sellerType}
                       onChange={(e) => {
@@ -226,7 +238,7 @@ const Calculator: React.FC = () => {
                       }}
                       className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white"
                     >
-                      <option value="">Pilih Tipe</option>
+                      <option value="">{language === 'en' ? 'Select Type' : 'Pilih Tipe'}</option>
                       {Object.keys(FEES_DATA[platform]).map(type => (
                         <option key={type} value={type}>{type}</option>
                       ))}
@@ -234,7 +246,7 @@ const Calculator: React.FC = () => {
                   </div>
                   <div>
                     <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
-                      Kategori Produk {platform === 'tiktok' ? 'Tokopedia/TikTok' : ''}
+                      {language === 'en' ? 'Product Category' : 'Kategori Produk'} {platform === 'tiktok' ? 'Tokopedia/TikTok' : ''}
                     </label>
                     <select
                       value={category}
@@ -242,7 +254,7 @@ const Calculator: React.FC = () => {
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900 bg-white disabled:opacity-50"
                     >
-                      <option value="">Pilih Kategori</option>
+                      <option value="">{language === 'en' ? 'Select Category' : 'Pilih Kategori'}</option>
                       {sellerType && Object.keys(FEES_DATA[platform][sellerType]).map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                       ))}
@@ -287,28 +299,32 @@ const Calculator: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Harga Jual (Rp)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                    {language === 'en' ? 'Selling Price (Rp)' : 'Harga Jual (Rp)'}
+                  </label>
                   <div className="relative">
                     <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                     <input 
                       type="text"
                       value={formatInput(sellingPrice)}
                       onChange={(e) => handleInputChange(e.target.value, setSellingPrice)}
-                      placeholder="Jual"
+                      placeholder={language === 'en' ? 'Price' : 'Jual'}
                       className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Modal (Rp)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                    {language === 'en' ? 'COGS / Cost of Goods (Rp)' : 'Modal (Rp)'}
+                  </label>
                   <div className="relative">
                     <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                     <input 
                       type="text"
                       value={formatInput(cogs)}
                       onChange={(e) => handleInputChange(e.target.value, setCogs)}
-                      placeholder="Modal"
+                      placeholder={language === 'en' ? 'COGS' : 'Modal'}
                       className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                     />
                   </div>
@@ -317,7 +333,9 @@ const Calculator: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Biaya Iklan (%)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                    {language === 'en' ? 'Ad Spend (%)' : 'Biaya Iklan (%)'}
+                  </label>
                   <div className="relative">
                     <input 
                       type="number"
@@ -331,7 +349,9 @@ const Calculator: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Packing (Rp)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                    {language === 'en' ? 'Packaging (Rp)' : 'Packing (Rp)'}
+                  </label>
                   <div className="relative">
                     <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                     <input 
@@ -345,14 +365,16 @@ const Calculator: React.FC = () => {
               </div>
 
               <div className="pt-2">
-                <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Komisi Affiliate (%)</label>
+                <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                  {language === 'en' ? 'Affiliate Commission (%)' : 'Komisi Affiliate (%)'}
+                </label>
                 <div className="relative">
                   <input 
                     type="number"
                     step="0.1"
                     value={affiliatePercent || ''}
                     onChange={(e) => setAffiliatePercent(Number(e.target.value))}
-                    placeholder="Masukkan % komisi affiliate"
+                    placeholder={language === 'en' ? 'Enter affiliate commission %' : 'Masukkan % komisi affiliate'}
                     className="w-full pl-3 pr-8 sm:pl-4 sm:pr-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                   />
                   <span className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">%</span>
@@ -361,8 +383,12 @@ const Calculator: React.FC = () => {
 
               <div className="pt-2 flex items-center justify-between bg-slate-100/50 p-4 rounded-2xl border border-slate-200/50">
                 <div className="flex flex-col">
-                  <span className="text-xs sm:text-sm font-bold text-slate-700">Pre-Order Item?</span>
-                  <span className="text-[10px] text-slate-500">Otomatis +3% biaya untuk Shopee/Tiktok</span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-700">
+                    {language === 'en' ? 'Pre-Order Product?' : 'Produk Pre-Order?'}
+                  </span>
+                  <span className="text-[10px] text-slate-500">
+                    {language === 'en' ? 'Automatically +3% fee for Shopee/Tiktok' : 'Otomatis +3% biaya untuk Shopee/Tiktok'}
+                  </span>
                 </div>
                 <button
                   onClick={() => setIsPreOrder(!isPreOrder)}
@@ -382,8 +408,12 @@ const Calculator: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between bg-orange-50 p-4 rounded-2xl border border-orange-100">
                     <div className="flex flex-col">
-                      <span className="text-xs sm:text-sm font-bold text-orange-800">Layanan Promo Xtra?</span>
-                      <span className="text-[10px] text-orange-600">Biaya layanan 4.5%</span>
+                      <span className="text-xs sm:text-sm font-bold text-orange-800">
+                        {language === 'en' ? 'Join Promo Xtra Program?' : 'Layanan Promo Xtra?'}
+                      </span>
+                      <span className="text-[10px] text-orange-600">
+                        {language === 'en' ? 'Service fee 4.5%' : 'Biaya layanan 4.5%'}
+                      </span>
                     </div>
                     <button
                       onClick={() => setUsePromoXtra(!usePromoXtra)}
@@ -401,8 +431,12 @@ const Calculator: React.FC = () => {
 
                   <div className="flex items-center justify-between bg-blue-50 p-4 rounded-2xl border border-blue-100">
                     <div className="flex flex-col">
-                      <span className="text-xs sm:text-sm font-bold text-blue-800">Gratis Ongkir Xtra?</span>
-                      <span className="text-[10px] text-blue-600">Biaya layanan 5.5% (Kategori G)</span>
+                      <span className="text-xs sm:text-sm font-bold text-blue-800">
+                        {language === 'en' ? 'Join Free Shipping Xtra?' : 'Gratis Ongkir Xtra?'}
+                      </span>
+                      <span className="text-[10px] text-blue-600">
+                        {language === 'en' ? 'Service fee 5.5% (Category G)' : 'Biaya layanan 5.5% (Kategori G)'}
+                      </span>
                     </div>
                     <button
                       onClick={() => setUseGratisOngkirXtra(!useGratisOngkirXtra)}
@@ -424,8 +458,12 @@ const Calculator: React.FC = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between bg-fuchsia-50 p-4 rounded-2xl border border-fuchsia-100">
                     <div className="flex flex-col">
-                      <span className="text-xs sm:text-sm font-bold text-fuchsia-800">Komisi Dinamis?</span>
-                      <span className="text-[10px] text-fuchsia-600">Biaya layanan 5.5%</span>
+                      <span className="text-xs sm:text-sm font-bold text-fuchsia-800">
+                        {language === 'en' ? 'Use Dynamic Commission?' : 'Komisi Dinamis?'}
+                      </span>
+                      <span className="text-[10px] text-fuchsia-600">
+                        {language === 'en' ? 'Service fee 5.5%' : 'Biaya layanan 5.5%'}
+                      </span>
                     </div>
                     <button
                       onClick={() => setUseKomisiDinamis(!useKomisiDinamis)}
@@ -443,8 +481,12 @@ const Calculator: React.FC = () => {
 
                   <div className="flex items-center justify-between bg-violet-50 p-4 rounded-2xl border border-violet-100">
                     <div className="flex flex-col">
-                      <span className="text-xs sm:text-sm font-bold text-violet-800">Cashback Bonus?</span>
-                      <span className="text-[10px] text-violet-600">Biaya layanan 3.5%</span>
+                      <span className="text-xs sm:text-sm font-bold text-violet-800">
+                        {language === 'en' ? 'Use Bonus Cashback?' : 'Cashback Bonus?'}
+                      </span>
+                      <span className="text-[10px] text-violet-600">
+                        {language === 'en' ? 'Service fee 3.5%' : 'Biaya layanan 3.5%'}
+                      </span>
                     </div>
                     <button
                       onClick={() => setUseCashbackBonus(!useCashbackBonus)}
@@ -472,7 +514,9 @@ const Calculator: React.FC = () => {
               <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
 
-              <h4 className="text-lg font-bold text-slate-400 mb-2 uppercase tracking-widest">ESTIMASI PROFIT BERSIH</h4>
+              <h4 className="text-lg font-bold text-slate-400 mb-2 uppercase tracking-widest">
+                {language === 'en' ? 'ESTIMATED NET PROFIT' : 'ESTIMASI PROFIT BERSIH'}
+              </h4>
               <div className="text-5xl sm:text-6xl font-black text-yellow-500 mb-12 tracking-tighter">
                 {formatCurrency(results.netProfit)}
               </div>
@@ -483,7 +527,9 @@ const Calculator: React.FC = () => {
                   <p className="text-2xl font-black text-white">{results.margin.toFixed(1)}%</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">ROI Modal</p>
+                  <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">
+                    {language === 'en' ? 'COGS ROI' : 'ROI Modal'}
+                  </p>
                   <p className="text-2xl font-black text-white">{results.roi.toFixed(1)}%</p>
                 </div>
               </div>
@@ -492,36 +538,50 @@ const Calculator: React.FC = () => {
                 {platform === 'shopee' ? (
                   <>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-400">Biaya Administrasi</span>
+                      <span className="text-slate-400">
+                        {language === 'en' ? 'Administration Fee' : 'Biaya Administrasi'}
+                      </span>
                       <span className="text-white font-bold">{formatCurrency(results.adminFeeAmount)}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-400">Biaya Layanan</span>
+                      <span className="text-slate-400">
+                        {language === 'en' ? 'Service Fee' : 'Biaya Layanan'}
+                      </span>
                       <span className="text-white font-bold">{formatCurrency(results.serviceFeeAmount)}</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-slate-400">Biaya Proses Pesanan</span>
+                      <span className="text-slate-400">
+                        {language === 'en' ? 'Order Processing Fee' : 'Biaya Proses Pesanan'}
+                      </span>
                       <span className="text-white font-bold">{formatCurrency(results.fixedFeeAmount)}</span>
                     </div>
                   </>
                 ) : (
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 font-bold">Biaya Platform / Admin</span>
+                    <span className="text-slate-400 font-bold">
+                      {language === 'en' ? 'Platform / Admin Fee' : 'Biaya Platform / Admin'}
+                    </span>
                     <span className="text-white font-black">{formatCurrency(results.adminFeeAmount + results.serviceFeeAmount + results.fixedFeeAmount)}</span>
                   </div>
                 )}
                 
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400 font-bold">Biaya Iklan</span>
+                  <span className="text-slate-400 font-bold">
+                    {language === 'en' ? 'Ad Spend' : 'Biaya Iklan'}
+                  </span>
                   <span className="text-white font-black">{formatCurrency(results.marketingAmount)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400 font-bold">Komisi Affiliate</span>
+                  <span className="text-slate-400 font-bold">
+                    {language === 'en' ? 'Affiliate Commission' : 'Komisi Affiliate'}
+                  </span>
                   <span className="text-white font-black">{formatCurrency(results.affiliateAmount)}</span>
                 </div>
                 {results.preOrderAmount > 0 && (
                   <div className="flex justify-between items-center text-yellow-500">
-                    <span className="font-bold">Biaya Pre-Order (3%)</span>
+                    <span className="font-bold">
+                      {language === 'en' ? 'Pre-Order Fee (3%)' : 'Biaya Pre-Order (3%)'}
+                    </span>
                     <span className="font-black">{formatCurrency(results.preOrderAmount)}</span>
                   </div>
                 )}
@@ -539,7 +599,9 @@ const Calculator: React.FC = () => {
                 )}
                 {results.komisiDinamisAmount > 0 && (
                   <div className="flex justify-between items-center text-fuchsia-500">
-                    <span className="font-bold">Komisi Dinamis (5.5%)</span>
+                    <span className="font-bold">
+                      {language === 'en' ? 'Dynamic Commission (5.5%)' : 'Komisi Dinamis (5.5%)'}
+                    </span>
                     <span className="font-black">{formatCurrency(results.komisiDinamisAmount)}</span>
                   </div>
                 )}
@@ -550,7 +612,9 @@ const Calculator: React.FC = () => {
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-2">
-                  <span className="text-slate-400 font-bold">Total Seluruh Biaya</span>
+                  <span className="text-slate-400 font-bold">
+                    {language === 'en' ? 'Total Deductions & Costs' : 'Total Seluruh Biaya'}
+                  </span>
                   <span className="text-red-400 font-black">{formatCurrency(results.totalCosts)}</span>
                 </div>
               </div>
@@ -562,7 +626,7 @@ const Calculator: React.FC = () => {
                   rel="noopener noreferrer"
                   className="block w-full bg-yellow-500 text-slate-900 py-5 rounded-2xl font-black text-center hover:bg-yellow-400 transition-all shadow-xl shadow-yellow-500/20 uppercase tracking-widest text-sm"
                 >
-                  Konsultasi Optimasi Profit
+                  {language === 'en' ? 'Consult Profit Optimization' : 'Konsultasi Optimasi Profit'}
                 </a>
               </div>
             </div>
@@ -570,7 +634,10 @@ const Calculator: React.FC = () => {
             <div className="mt-8 bg-yellow-50 border border-yellow-100 p-6 rounded-[24px] flex items-start gap-4">
               <TrendingUp className="text-yellow-600 flex-shrink-0 mt-1" size={24} />
               <p className="text-yellow-800 text-sm font-medium leading-relaxed">
-                <span className="font-bold">Tips:</span> Untuk mendapatkan profit bersih yang sehat di marketplace, usahakan margin minimal berada di angka 20-30% untuk menutupi biaya platform dan risiko retur.
+                <span className="font-bold">{language === 'en' ? 'Tips:' : 'Tips:'}</span>{' '}
+                {language === 'en'
+                  ? 'To achieve a healthy net profit in the marketplace, target a minimum margin of 20-30% to cover platform fees and return risks.'
+                  : 'Untuk mendapatkan profit bersih yang sehat di marketplace, usahakan margin minimal berada di angka 20-30% untuk menutupi biaya platform dan risiko retur.'}
               </p>
             </div>
           </div>

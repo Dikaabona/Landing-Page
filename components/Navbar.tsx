@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Instagram, ChevronDown } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from './LanguageContext';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,6 +10,7 @@ const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,23 +45,24 @@ const Navbar: React.FC = () => {
   const waUrl = "https://wa.me/628111743005";
 
   const navLinks = [
-    { name: 'Layanan', href: '#services', external: false, type: 'hash' },
-    { name: 'Price List', href: '#price-list', external: false, type: 'hash' },
-    { name: 'Kenapa Kami', href: '#why-us', external: false, type: 'hash' },
-    { name: 'Article', href: '/articles', external: false, type: 'page' },
-    { name: 'Karir', href: '/karir', external: false, type: 'page' },
+    { name: t('nav.services'), href: '#services', external: false, type: 'hash' },
+    { name: t('nav.priceList'), href: '#price-list', external: false, type: 'hash' },
+    { name: t('nav.whyUs'), href: '#why-us', external: false, type: 'hash' },
+    { name: t('nav.article'), href: '/articles', external: false, type: 'page' },
+    { name: t('nav.career'), href: '/karir', external: false, type: 'page' },
     { 
-      name: 'Kalkulator Marketplace', 
+      name: t('nav.calculator'), 
       href: '/kalkulator', 
       external: false, 
       type: 'page',
       subMenus: [
-        { name: 'Profit Marketplace', href: '/kalkulator' },
-        { name: 'Real Ads Spend (PPN 11%)', href: '/kalkulator-ads' }
+        { name: t('nav.profitCalc'), href: '/kalkulator' },
+        { name: t('nav.adsCalc'), href: '/kalkulator-ads' }
       ]
     },
-    { name: 'Konsultasi Gratis', href: waUrl, external: true, type: 'external' },
+    { name: t('nav.freeConsult'), href: waUrl, external: true, type: 'external' },
   ];
+
 
   const leftLinks = navLinks.slice(0, 6);
   const rightLink = navLinks[6];
@@ -205,6 +208,31 @@ const Navbar: React.FC = () => {
                 </svg>
               </a>
             </div>
+
+            {/* Language Switcher */}
+            <div className="flex items-center bg-neutral-900 border border-neutral-800 p-0.5 rounded-full text-[10px] font-black tracking-wider">
+              <button
+                onClick={() => setLanguage('id')}
+                className={`px-2.5 py-1 rounded-full transition-all duration-200 cursor-pointer ${
+                  language === 'id' 
+                    ? 'bg-yellow-500 text-slate-950 font-black' 
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                ID
+              </button>
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-2.5 py-1 rounded-full transition-all duration-200 cursor-pointer ${
+                  language === 'en' 
+                    ? 'bg-yellow-500 text-slate-950 font-black' 
+                    : 'text-neutral-400 hover:text-white'
+                }`}
+              >
+                EN
+              </button>
+            </div>
+
             <a
               href={rightLink.href}
               target="_blank"
@@ -290,6 +318,33 @@ const Navbar: React.FC = () => {
               )}
             </div>
           ))}
+          
+          {/* Mobile Language Switcher */}
+          <div className="flex justify-center items-center py-2 border-t border-neutral-900 mt-2 space-x-3">
+            <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Language:</span>
+            <div className="flex items-center bg-neutral-900 border border-neutral-800 p-0.5 rounded-full text-[10px] font-black">
+              <button
+                onClick={() => setLanguage('id')}
+                className={`px-3 py-1 rounded-full transition-all duration-200 cursor-pointer ${
+                  language === 'id' 
+                    ? 'bg-yellow-500 text-slate-950 font-black' 
+                    : 'text-neutral-400'
+                }`}
+              >
+                INDONESIA
+              </button>
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-3 py-1 rounded-full transition-all duration-200 cursor-pointer ${
+                  language === 'en' 
+                    ? 'bg-yellow-500 text-slate-950 font-black' 
+                    : 'text-neutral-400'
+                }`}
+              >
+                ENGLISH
+              </button>
+            </div>
+          </div>
           
           <div className="flex justify-center space-x-5 pt-2 pb-0.5 border-t border-neutral-900 mt-1">
             <a 

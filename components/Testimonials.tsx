@@ -1,25 +1,34 @@
 
 import React from 'react';
 import { Quote, Star } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const Testimonials: React.FC = () => {
+  const { language } = useLanguage();
+
   const testimonials = [
     {
       name: "Siska Pratama",
       role: "Owner Fashion Brand",
-      text: "Sejak handle live streaming sama Visibel, omzet harian kami naik 4x lipat dalam sebulan. Host-nya sangat enerjik dan tahu cara jualan!",
+      text: language === 'en'
+        ? "Since handling our live streaming with Visibel, our daily revenue has increased 4x within a month. Their hosts are energetic and really know how to sell!"
+        : "Sejak handle live streaming sama Visibel, omzet harian kami naik 4x lipat dalam sebulan. Host-nya sangat enerjik dan tahu cara jualan!",
       avatar: "https://picsum.photos/seed/p1/100/100"
     },
     {
       name: "Andi Wijaya",
       role: "Founder Beauty Skincare",
-      text: "Content short video mereka bener-bener viral dan menghasilkan banyak pembeli baru. Strategi ads-nya juga transparan banget ROI-nya.",
+      text: language === 'en'
+        ? "Their short video content goes viral and has brought in so many new buyers. Their ad strategy is also highly transparent with clear ROI."
+        : "Content short video mereka bener-bener viral dan menghasilkan banyak pembeli baru. Strategi ads-nya juga transparan banget ROI-nya.",
       avatar: "https://picsum.photos/seed/p2/100/100"
     },
     {
       name: "Budi Santoso",
       role: "CEO F&B Group",
-      text: "Partner terbaik untuk scale up bisnis di TikTok. Timnya responsif dan data yang diberikan sangat detail untuk planning ke depan.",
+      text: language === 'en'
+        ? "The best partner for scaling up businesses on TikTok. The team is responsive and the data provided is very detailed for future planning."
+        : "Partner terbaik untuk scale up bisnis di TikTok. Timnya responsif dan data yang diberikan sangat detail untuk planning ke depan.",
       avatar: "https://picsum.photos/seed/p3/100/100"
     }
   ];
@@ -29,7 +38,9 @@ const Testimonials: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-yellow-600 font-bold tracking-wider uppercase text-sm mb-4">Testimonial</h2>
-          <h3 className="text-[24px] sm:text-3xl font-extrabold text-slate-900 px-4">Apa Kata Mereka Tentang Kami?</h3>
+          <h3 className="text-[24px] sm:text-3xl font-extrabold text-slate-900 px-4">
+            {language === 'en' ? 'What They Say About Us' : 'Apa Kata Mereka Tentang Kami?'}
+          </h3>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">

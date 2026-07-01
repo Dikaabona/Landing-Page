@@ -1,11 +1,65 @@
 
 import React from 'react';
 import { Check } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const PriceList: React.FC = () => {
+  const { language, t } = useLanguage();
   const waUrl = "https://wa.me/628111743005";
 
-  const plans = [
+  const plans = language === 'en' ? [
+    {
+      price: "Live Streaming",
+      amount: "9.000.000",
+      features: [
+        "100 hours live streaming / month",
+        "Min Subscribe 3 months",
+        "No Commission Fee",
+        "Free Setup Live room",
+        "Free Sticker",
+        "Monthly Performance Report"
+      ],
+      recommended: true 
+    },
+    {
+      price: "Short Video",
+      amount: "6.000.000",
+      features: [
+        "30 short videos / month",
+        "Script Video",
+        "Content Plan",
+        "No Commission Fee",
+        "Talent",
+        "Monthly Report",
+        "Min Subscribe 3 months"
+      ],
+      recommended: true 
+    },
+    {
+      price: "Tiktok Ads Service",
+      amount: "2.500.000",
+      features: [
+        "Min Subscribe 3 months",
+        "5% commission, max commission Rp 10.000.000 / month",
+        "Manage Shop Tab",
+        "Weekly Report",
+        "Account Manager"
+      ],
+      recommended: false
+    },
+    {
+      price: "Enterprise Package",
+      amount: "Custom Pricing",
+      features: [
+        "Custom live streaming hours",
+        "Custom short video quantity",
+        "Full production strategy",
+        "Dedicated Team & Account Manager",
+        "Customized reports & analytics"
+      ],
+      recommended: false
+    }
+  ] : [
     {
       price: "Live Streaming",
       amount: "9.000.000",
@@ -63,8 +117,12 @@ const PriceList: React.FC = () => {
     <section id="price-list" className="py-24 bg-white scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">PAKET HARGA & INVESTASI</h2>
-          <h3 className="text-[24px] sm:text-4xl md:text-5xl font-[900] text-slate-900 leading-tight">Investasikan Pertumbuhan Brand Anda</h3>
+          <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">
+            {language === 'en' ? 'PRICE PLANS & INVESTMENT' : 'PAKET HARGA & INVESTASI'}
+          </h2>
+          <h3 className="text-[24px] sm:text-4xl md:text-5xl font-[900] text-slate-900 leading-tight">
+            {t('price.title')}
+          </h3>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 items-stretch">
@@ -79,7 +137,7 @@ const PriceList: React.FC = () => {
             >
               {plan.recommended && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-900 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest whitespace-nowrap z-20 shadow-md">
-                  Best Seller
+                  {t('price.bestSeller')}
                 </div>
               )}
 
@@ -118,7 +176,7 @@ const PriceList: React.FC = () => {
                       : 'bg-[#0f172a] text-white hover:bg-black shadow-slate-200/50 active:scale-95'
                   }`}
                 >
-                  PILIH PAKET
+                  {t('price.choose')}
                 </a>
               </div>
             </div>
@@ -128,5 +186,6 @@ const PriceList: React.FC = () => {
     </section>
   );
 };
+
 
 export default PriceList;

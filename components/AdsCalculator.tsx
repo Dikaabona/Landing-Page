@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Calculator as CalcIcon, AlertCircle, ArrowRightLeft, TrendingDown, BadgePercent } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const AdsCalculator: React.FC = () => {
+  const { language } = useLanguage();
   const [dashboardSpend, setDashboardSpend] = useState<number>(0);
   const [dashboardSales, setDashboardSales] = useState<number>(0);
   const [dashboardOrders, setDashboardOrders] = useState<number>(0);
@@ -65,9 +67,13 @@ const AdsCalculator: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">ADVERTISING TOOLS</h2>
-          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">Kalkulator Real Ads Spend (PPN 11%)</h3>
+          <h3 className="text-3xl sm:text-5xl font-[900] text-slate-900 leading-tight">
+            {language === 'en' ? 'Real Ads Spend Calculator (11% VAT)' : 'Kalkulator Real Ads Spend (PPN 11%)'}
+          </h3>
           <p className="mt-4 text-slate-500 max-w-2xl mx-auto font-medium">
-            Jangan terjebak dengan data dashboard marketplace. Hitung biaya iklan sebenarnya setelah pajak top-up PPN 11% untuk mengetahui profitabilitas yang jujur.
+            {language === 'en'
+              ? "Don't get tricked by the marketplace dashboard data. Calculate the actual ad spend after 11% VAT top-up taxes to find out your true profitability."
+              : 'Jangan terjebak dengan data dashboard marketplace. Hitung biaya iklan sebenarnya setelah pajak top-up PPN 11% untuk mengetahui profitabilitas yang jujur.'}
           </p>
         </div>
 
@@ -76,56 +82,67 @@ const AdsCalculator: React.FC = () => {
           <div className="bg-white p-6 sm:p-10 rounded-[32px] border-2 border-slate-100 shadow-xl shadow-slate-200/40">
             <h4 className="text-xl font-bold text-slate-900 mb-8 flex items-center gap-2">
               <CalcIcon className="text-yellow-500" size={24} />
-              Data Dashboard Marketplace
+              {language === 'en' ? 'Marketplace Dashboard Data' : 'Data Dashboard Marketplace'}
             </h4>
 
             <div className="space-y-4 sm:space-y-6">
               <div>
-                <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2 leading-tight">Total Spend / Biaya Iklan (Rp)</label>
+                <label className="block text-xs sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2 leading-tight">
+                  {language === 'en' ? 'Total Spend / Ad Budget (Rp)' : 'Total Spend / Biaya Iklan (Rp)'}
+                </label>
                 <div className="relative">
                   <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                   <input 
                     type="text"
                     value={formatInput(dashboardSpend)}
                     onChange={(e) => handleInputChange(e.target.value, setDashboardSpend)}
-                    placeholder="Spend Dashboard"
+                    placeholder={language === 'en' ? 'Dashboard Spend' : 'Spend Dashboard'}
                     className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                   />
                 </div>
                 <p className="mt-1 text-[10px] sm:text-xs text-slate-400 flex items-center gap-1">
-                  <AlertCircle size={10} className="sm:w-3 sm:h-3" /> Data terlihat di dashboard Shopee/Lazada/Tokopedia
+                  <AlertCircle size={10} className="sm:w-3 sm:h-3" />{' '}
+                  {language === 'en' 
+                    ? 'Data visible on Shopee/Lazada/Tokopedia dashboard' 
+                    : 'Data terlihat di dashboard Shopee/Lazada/Tokopedia'}
                 </p>
               </div>
  
               <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Total Omzet (Rp)</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                    {language === 'en' ? 'Total Revenue (Rp)' : 'Total Omzet (Rp)'}
+                  </label>
                   <div className="relative">
                     <span className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-base">Rp</span>
                     <input 
                       type="text"
                       value={formatInput(dashboardSales)}
                       onChange={(e) => handleInputChange(e.target.value, setDashboardSales)}
-                      placeholder="Omzet"
+                      placeholder={language === 'en' ? 'Revenue' : 'Omzet'}
                       className="w-full pl-8 pr-3 sm:pl-12 sm:pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">Total Order</label>
+                  <label className="block text-[10px] sm:text-sm font-bold text-slate-700 mb-1 sm:mb-2">
+                    {language === 'en' ? 'Total Orders' : 'Total Order'}
+                  </label>
                   <input 
                     type="number"
                     value={dashboardOrders || ''}
                     onChange={(e) => setDashboardOrders(Number(e.target.value))}
-                    placeholder="Order"
+                    placeholder={language === 'en' ? 'Orders' : 'Order'}
                     className="w-full px-3 py-3 sm:px-4 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-slate-200 focus:border-yellow-500 focus:ring-0 transition-all font-bold text-sm sm:text-base text-slate-900"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="mt-10 p-6 bg-blue-50 rounded-2xl border border-blue-100 italic text-sm text-blue-800">
-              "Dashboard marketplace hanya mencatat saldo yang terpotong saat spend. Namun, untuk mendapatkan saldo tersebut, Anda telah membayar PPN 11% saat melakukan top-up saldo iklan."
+            <div className="mt-10 p-6 bg-blue-50 rounded-2xl border border-blue-100 italic text-sm text-blue-800 leading-relaxed">
+              {language === 'en'
+                ? '"Marketplace dashboards only log the balance deducted during spend. However, to acquire that balance, you have already paid an 11% VAT tax during top-up."'
+                : '"Dashboard marketplace hanya mencatat saldo yang terpotong saat spend. Namun, untuk mendapatkan saldo tersebut, Anda telah membayar PPN 11% saat melakukan top-up saldo iklan."'}
             </div>
           </div>
 
@@ -159,11 +176,17 @@ const AdsCalculator: React.FC = () => {
                         <span className="text-yellow-500 text-sm">Real:</span>
                         <span className="text-yellow-500 font-black text-xl">{results.realRoi.toFixed(2)}</span>
                     </div>
-                    {results.roiGap > 0 && <span className="text-red-400 text-xs font-bold mt-1">Turun {results.roiGap.toFixed(2)} pts</span>}
+                    {results.roiGap > 0 && (
+                      <span className="text-red-400 text-xs font-bold mt-1">
+                        {language === 'en' ? `Down by ${results.roiGap.toFixed(2)} pts` : `Turun ${results.roiGap.toFixed(2)} pts`}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <p className="text-slate-500 text-xs font-bold uppercase">CPO (Biaya Per Order)</p>
+                  <p className="text-slate-500 text-xs font-bold uppercase">
+                    {language === 'en' ? 'CPO (Cost Per Order)' : 'CPO (Biaya Per Order)'}
+                  </p>
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                         <span className="text-slate-400 text-sm">Dashboard:</span>
@@ -173,13 +196,19 @@ const AdsCalculator: React.FC = () => {
                         <span className="text-red-400 text-sm">Real:</span>
                         <span className="text-red-400 font-black text-xl">{formatCurrency(results.realCpo)}</span>
                     </div>
-                    {results.cpoGap > 0 && <span className="text-red-400 text-xs font-bold mt-1">Naik {formatCurrency(results.cpoGap)}</span>}
+                    {results.cpoGap > 0 && (
+                      <span className="text-red-400 text-xs font-bold mt-1">
+                        {language === 'en' ? `Up by ${formatCurrency(results.cpoGap)}` : `Naik ${formatCurrency(results.cpoGap)}`}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
 
               <div className="mt-10 pt-8 border-t border-slate-800 flex justify-between items-center">
-                <span className="text-slate-400 font-bold">PPN 11% Tersembunyi</span>
+                <span className="text-slate-400 font-bold">
+                  {language === 'en' ? 'Hidden 11% VAT Tax' : 'PPN 11% Tersembunyi'}
+                </span>
                 <span className="text-slate-300 font-black">{formatCurrency(results.ppnAmount)}</span>
               </div>
             </div>
@@ -190,24 +219,58 @@ const AdsCalculator: React.FC = () => {
                     <TrendingDown className="text-slate-900" size={24} />
                 </div>
                 <div>
-                    <h5 className="text-lg font-black text-slate-900 uppercase tracking-tight">Kenyataan Pahit Marketing Ads</h5>
+                    <h5 className="text-lg font-black text-slate-900 uppercase tracking-tight">
+                      {language === 'en' ? 'The Harsh Reality of Ads Marketing' : 'Kenyataan Pahit Marketing Ads'}
+                    </h5>
                     <p className="text-slate-700 text-sm mt-1 font-medium italic">
-                        "Dashboard menunjukkan performa bagus, tapi saat tarik saldo bank, kok sisa sedikit?"
+                      {language === 'en'
+                        ? '"The dashboard shows great performance, but when withdrawing bank balance, why is there so little left?"'
+                        : '"Dashboard menunjukkan performa bagus, tapi saat tarik saldo bank, kok sisa sedikit?"'}
                     </p>
                 </div>
               </div>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 text-sm text-slate-900">
                     <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 flex-shrink-0"></div>
-                    <p><span className="font-bold">Dashboard Spend</span> hanya mencatat penggunaan saldo, bukan biaya yang Anda bayar ke marketplace.</p>
+                    <p>
+                      {language === 'en' ? (
+                        <>
+                          <span className="font-bold">Dashboard Spend</span> only records usage of the balance, not the actual price you paid to the marketplace.
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-bold">Dashboard Spend</span> hanya mencatat penggunaan saldo, bukan biaya yang Anda bayar ke marketplace.
+                        </>
+                      )}
+                    </p>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-slate-900">
                     <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 flex-shrink-0"></div>
-                    <p><span className="font-bold">Real ROI</span> Anda selalu 11% lebih rendah dari yang terlihat di layar dashboard.</p>
+                    <p>
+                      {language === 'en' ? (
+                        <>
+                          <span className="font-bold">Your Real ROI</span> is always 11% lower than what is displayed on the dashboard screen.
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-bold">Real ROI</span> Anda selalu 11% lebih rendah dari yang terlihat di layar dashboard.
+                        </>
+                      )}
+                    </p>
                 </li>
                 <li className="flex items-start gap-3 text-sm text-slate-900">
                     <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 flex-shrink-0"></div>
-                    <p><span className="font-bold">Real CPO</span> Anda 11% lebih mahal dari yang Anda laporkan setiap minggu.</p>
+                    <p>
+                      {language === 'en' ? (
+                        <>
+                          <span className="font-bold">Your Real CPO</span> is 11% more expensive than what you report every week.
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-bold">Real CPO</span> Anda 11% lebih mahal dari yang Anda laporkan setiap minggu.
+                        </>
+                      )}
+                    </p>
                 </li>
               </ul>
               <div className="mt-8">
@@ -217,7 +280,7 @@ const AdsCalculator: React.FC = () => {
                   rel="noopener noreferrer"
                   className="block w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-center hover:bg-slate-800 transition-all uppercase tracking-widest text-xs"
                 >
-                  Konsultasi Efisiensi Ads
+                  {language === 'en' ? 'Consult Ads Efficiency' : 'Konsultasi Efisiensi Ads'}
                 </a>
               </div>
             </div>

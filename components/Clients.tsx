@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { useLanguage } from './LanguageContext';
 
 const Clients: React.FC = () => {
+  const { language } = useLanguage();
   const allLogos = [
     { name: 'CWJ', id: '1O8SdLl9n8nm4IeS9gtWkXlgqhaz8HRqX' },
     { name: 'Hijab', id: '17y7pQWeE5EgPL0WBp7bDp4Bx3Bqg39zE' },
@@ -30,11 +32,12 @@ const Clients: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="text-center">
           <h2 className="text-slate-500 font-bold tracking-widest text-lg mb-6 uppercase tracking-[0.2em]">
-            TELAH DIPERCAYA OLEH 100+ BRAND & UMKM
+            {language === 'en' ? 'TRUSTED BY 100+ BRANDS & MSMES' : 'TELAH DIPERCAYA OLEH 100+ BRAND & UMKM'}
           </h2>
           <p className="max-w-4xl mx-auto text-slate-400 text-lg italic leading-relaxed font-medium">
-            Visibel Agency telah dipercaya oleh berbagai brand UMKM, fashion, beauty, F&B, dan marketplace seller 
-            untuk meningkatkan performa penjualan mereka melalui strategi digital yang terukur.
+            {language === 'en'
+              ? 'Visibel Agency has been trusted by various MSME, fashion, beauty, F&B brands, and marketplace sellers to boost their sales performance through measurable digital strategies.'
+              : 'Visibel Agency telah dipercaya oleh berbagai brand UMKM, fashion, beauty, F&B, dan marketplace seller untuk meningkatkan performa penjualan mereka melalui strategi digital yang terukur.'}
           </p>
         </div>
       </div>

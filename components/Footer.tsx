@@ -1,8 +1,11 @@
 
 import React from 'react';
 import { Instagram } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const Footer: React.FC = () => {
+  const { language } = useLanguage();
+
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault();
     const element = document.getElementById(targetId);
@@ -19,6 +22,31 @@ const Footer: React.FC = () => {
       });
     }
   };
+
+  const content = {
+    id: {
+      desc: "Partner pertumbuhan digital terpercaya yang fokus membantu brand memaksimalkan potensi penjualan melalui platform digital.",
+      servicesTitle: "Layanan",
+      navTitle: "Navigasi",
+      navServices: "Layanan Kami",
+      navWhyUs: "Kenapa Visibel?",
+      navContact: "Hubungi Kami",
+      privacy: "Kebijakan Privasi",
+      terms: "Syarat & Ketentuan"
+    },
+    en: {
+      desc: "Your trusted digital growth partner focused on helping brands maximize their sales potential through digital platforms.",
+      servicesTitle: "Services",
+      navTitle: "Navigation",
+      navServices: "Our Services",
+      navWhyUs: "Why Visibel?",
+      navContact: "Contact Us",
+      privacy: "Privacy Policy",
+      terms: "Terms & Conditions"
+    }
+  };
+
+  const current = content[language];
 
   return (
     <footer className="bg-black text-white pt-24 pb-12 overflow-hidden border-t border-neutral-900">
@@ -50,7 +78,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-slate-400 text-sm sm:text-base mb-8 leading-relaxed font-medium max-w-sm">
-              Partner pertumbuhan digital terpercaya yang fokus membantu brand memaksimalkan potensi penjualan melalui platform digital.
+              {current.desc}
             </p>
             
             {/* Social Media Links */}
@@ -82,7 +110,7 @@ const Footer: React.FC = () => {
           <div className="lg:w-3/5 grid grid-cols-2 gap-8 sm:gap-12">
             {/* Layanan Column */}
             <div>
-              <h4 className="text-lg sm:text-xl font-bold mb-6 sm:mb-8 text-white">Layanan</h4>
+              <h4 className="text-lg sm:text-xl font-bold mb-6 sm:mb-8 text-white">{current.servicesTitle}</h4>
               <ul className="space-y-4 sm:space-y-5 text-slate-400 font-medium text-xs sm:text-base">
                 <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Live Streaming Management</a></li>
                 <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Short Video Production</a></li>
@@ -93,24 +121,24 @@ const Footer: React.FC = () => {
             
             {/* Navigasi Column */}
             <div>
-              <h4 className="text-lg sm:text-xl font-bold mb-6 sm:mb-8 text-white">Navigasi</h4>
+              <h4 className="text-lg sm:text-xl font-bold mb-6 sm:mb-8 text-white">{current.navTitle}</h4>
               <ul className="space-y-4 sm:space-y-5 text-slate-400 font-medium text-xs sm:text-base">
-                <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">Layanan Kami</a></li>
-                <li><a href="#why-us" onClick={(e) => handleScroll(e, 'why-us')} className="hover:text-yellow-500 transition-colors">Kenapa Visibel?</a></li>
-                <li><a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="hover:text-yellow-500 transition-colors">Hubungi Kami</a></li>
+                <li><a href="#services" onClick={(e) => handleScroll(e, 'services')} className="hover:text-yellow-500 transition-colors">{current.navServices}</a></li>
+                <li><a href="#why-us" onClick={(e) => handleScroll(e, 'why-us')} className="hover:text-yellow-500 transition-colors">{current.navWhyUs}</a></li>
+                <li><a href="#contact" onClick={(e) => handleScroll(e, 'contact')} className="hover:text-yellow-500 transition-colors">{current.navContact}</a></li>
                 <li><a href="/articles" className="hover:text-yellow-500 transition-colors">Blog & Article</a></li>
                 <li><a href="/admin" className="text-[10px] opacity-20 hover:opacity-100 transition-opacity">Admin Access</a></li>
               </ul>
             </div>
           </div>
         </div>
-        
+          
         {/* Copyright Section */}
         <div className="border-t border-slate-800 pt-10 flex flex-col md:flex-row justify-between items-center text-slate-500 text-xs sm:text-sm">
           <p className="mb-4 md:mb-0">© 2026 Visibel Agency. All rights reserved.</p>
           <div className="flex space-x-8">
-            <a href="#" className="hover:text-white transition-colors">Kebijakan Privasi</a>
-            <a href="#" className="hover:text-white transition-colors">Syarat & Ketentuan</a>
+            <a href="#" className="hover:text-white transition-colors">{current.privacy}</a>
+            <a href="#" className="hover:text-white transition-colors">{current.terms}</a>
           </div>
         </div>
       </div>

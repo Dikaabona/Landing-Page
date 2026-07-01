@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { useLanguage } from './LanguageContext';
 
 const Hero: React.FC = () => {
+  const { t } = useLanguage();
   const partnerLogos = [
     { id: '1_CiIIdbumTS3cKcPwjWX7DFmrq7w0NXA', name: 'TikTok Shop Partner' },
     { id: '1BwBvKarXHrO3y1G34q4EMsSgNlsRqTSC', name: 'TikTok Marketing Partner' },
@@ -21,16 +23,16 @@ const Hero: React.FC = () => {
         <div className="text-center">
           {/* Heading - Enlarged, wider bound with fluid line-wrap */}
           <h1 className="text-[26px] xs:text-[32px] sm:text-6xl md:text-7xl lg:text-[76px] xl:text-[84px] font-[900] text-slate-900 leading-[1.2] mb-6 sm:mb-10 tracking-tight px-2 max-w-[1600px] mx-auto select-none">
-            Tingkatkan Revenue Bisnis Anda Lewat{" "}
+            {t('hero.title1')}
             <span className="inline-block text-yellow-500 hover:scale-[1.01] transition-transform duration-300">
-              Strategi Digital
-            </span>{" "}
-            yang Terukur
+              {t('hero.titleAccent')}
+            </span>
+            {t('hero.title2')}
           </h1>
           
           {/* Subheadline - Enlarged and wider */}
           <p className="text-sm sm:text-xl md:text-2xl text-slate-600 mb-10 sm:mb-16 leading-relaxed max-w-[1200px] mx-auto font-medium">
-            Bantu Brand Owner & UMKM scale up bisnis di TikTok & Social Media dengan Live Streaming, Konten Viral, dan Performance Ads berbasis data.
+            {t('hero.subheadline')}
           </p>
 
           {/* Platform Partners Section - High Fidelity Glassmorphism card with behind-the-glass gradient spotlight backdrops */}

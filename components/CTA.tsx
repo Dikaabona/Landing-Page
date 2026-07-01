@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { MessageSquare } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const CTA: React.FC = () => {
+  const { language } = useLanguage();
   const waUrl = "https://wa.me/628111743005";
 
   return (
@@ -14,10 +16,20 @@ const CTA: React.FC = () => {
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-black/10 rounded-full -mr-32 -mb-32 blur-3xl"></div>
           
           <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
-            Siap Scale Bisnis Anda <br className="hidden sm:block" /> Bersama Visibel?
+            {language === 'en' ? (
+              <>
+                Ready to Scale Your Business <br className="hidden sm:block" /> With Visibel?
+              </>
+            ) : (
+              <>
+                Siap Scale Bisnis Anda <br className="hidden sm:block" /> Bersama Visibel?
+              </>
+            )}
           </h2>
           <p className="text-xl text-slate-800 mb-10 max-w-2xl mx-auto font-medium">
-            Diskusikan kebutuhan brand Anda sekarang juga bersama tim kami dan dapatkan audit digital gratis.
+            {language === 'en'
+              ? 'Discuss your brand needs right now with our team and get a free digital audit.'
+              : 'Diskusikan kebutuhan brand Anda sekarang juga bersama tim kami dan dapatkan audit digital gratis.'}
           </p>
           <a
             href={waUrl}
@@ -26,7 +38,7 @@ const CTA: React.FC = () => {
             className="inline-flex items-center bg-slate-900 text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-black transition-all shadow-2xl hover:scale-105"
           >
             <MessageSquare className="mr-3" />
-            Konsultasi Gratis Sekarang
+            {language === 'en' ? 'Free Consultation Now' : 'Konsultasi Gratis Sekarang'}
           </a>
         </div>
       </div>

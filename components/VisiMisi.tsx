@@ -1,14 +1,37 @@
 
 import React from 'react';
 import { Eye, ShieldCheck, Zap, Heart } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const VisiMisi: React.FC = () => {
-  const missions = [
-    { title: "Strategi Berbasis Data", desc: "Membantu brand berkembang dengan strategi yang divalidasi oleh data nyata.", icon: <Zap size={18} className="sm:hidden" /> },
-    { title: "Transparansi Layanan", desc: "Memberikan layanan profesional, jujur, dan transparan dalam setiap laporan.", icon: <ShieldCheck size={18} className="sm:hidden" /> },
-    { title: "Revenue Focused", desc: "Mengoptimalkan live streaming & performance ads untuk meningkatkan revenue.", icon: <TrendingUpIconMobile /> },
-    { title: "Long-term Partner", desc: "Menjadi partner jangka panjang bagi setiap klien dalam perjalanan bisnis mereka.", icon: <Heart size={18} className="sm:hidden" /> }
-  ];
+  const { language } = useLanguage();
+
+  const content = {
+    id: {
+      badge: "Visi & Misi Kami",
+      title: "Menjadi Digital Growth Partner Terpercaya Bagi Brand Indonesia.",
+      quote: "Menjadi partner strategis brand dalam memenangkan pertumbuhan di era digital dan live commerce.",
+      missions: [
+        { title: "Strategi Berbasis Data", desc: "Membantu brand berkembang dengan strategi yang divalidasi oleh data nyata." },
+        { title: "Transparansi Layanan", desc: "Memberikan layanan profesional, jujur, dan transparan dalam setiap laporan." },
+        { title: "Revenue Focused", desc: "Mengoptimalkan live streaming & performance ads untuk meningkatkan revenue." },
+        { title: "Long-term Partner", desc: "Menjadi partner jangka panjang bagi setiap klien dalam perjalanan bisnis mereka." }
+      ]
+    },
+    en: {
+      badge: "Our Vision & Mission",
+      title: "Becoming the Most Trusted Digital Growth Partner for Brands.",
+      quote: "To be a strategic brand partner in winning growth in the digital and live commerce era.",
+      missions: [
+        { title: "Data-Driven Strategy", desc: "Helping brands grow with strategies validated by real data." },
+        { title: "Service Transparency", desc: "Providing professional, honest, and transparent services in every report." },
+        { title: "Revenue Focused", desc: "Optimizing live streaming & performance ads to boost revenue." },
+        { title: "Long-term Partner", desc: "Becoming a long-term partner for every client in their business journey." }
+      ]
+    }
+  };
+
+  const current = content[language];
 
   function TrendingUpIconMobile() { 
     return (
@@ -19,12 +42,16 @@ const VisiMisi: React.FC = () => {
     ); 
   }
 
-  // Adding desktop versions of icons to the array for cleaner rendering
-  const missionsWithDesktop = missions.map(m => ({
+  const icons = [
+    <Zap size={18} className="sm:hidden" />,
+    <ShieldCheck size={18} className="sm:hidden" />,
+    <TrendingUpIconMobile />,
+    <Heart size={18} className="sm:hidden" />
+  ];
+
+  const missions = current.missions.map((m, i) => ({
     ...m,
-    desktopIcon: React.isValidElement(m.icon) && (m.icon.type === 'svg' || (m.icon as any).type?.name === 'TrendingUpIconMobile') 
-      ? m.icon 
-      : React.cloneElement(m.icon as React.ReactElement, { size: 24, className: "hidden sm:block" })
+    icon: icons[i]
   }));
 
   return (
@@ -41,14 +68,14 @@ const VisiMisi: React.FC = () => {
                   <Eye size={20} className="sm:hidden" />
                   <Eye size={24} className="hidden sm:block" />
                 </div>
-                <h3 className="text-yellow-500 font-bold tracking-widest uppercase text-[10px] sm:text-sm">Visi & Misi Kami</h3>
+                <h3 className="text-yellow-500 font-bold tracking-widest uppercase text-[10px] sm:text-sm">{current.badge}</h3>
               </div>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-6 sm:mb-8 leading-tight">
-                Menjadi Digital Growth Partner Terpercaya Bagi Brand Indonesia.
+                {current.title}
               </h2>
               <div className="p-6 sm:p-8 bg-slate-800/50 rounded-2xl sm:rounded-3xl border border-slate-700">
                 <p className="text-sm sm:text-xl text-slate-300 italic font-medium">
-                  "Menjadi partner strategis brand dalam memenangkan pertumbuhan di era digital dan live commerce."
+                  "{current.quote}"
                 </p>
               </div>
             </div>

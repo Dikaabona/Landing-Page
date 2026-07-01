@@ -1,8 +1,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 const ShortVideos: React.FC = () => {
+  const { language } = useLanguage();
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -77,8 +79,10 @@ const ShortVideos: React.FC = () => {
       <div className="max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-14 relative">
         <div className="text-center mb-10">
           <h3 className="text-[24px] sm:text-5xl md:text-6xl font-[900] text-slate-900 leading-tight mb-4">Short Videos</h3>
-          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4">
-            Konten video kreatif yang didesain khusus untuk menarik perhatian audiens, membangun branding, dan mengonversi viewers menjadi pembeli loyal.
+          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4 font-medium">
+            {language === 'en'
+              ? 'Creative video content specifically designed to capture audience attention, build branding, and convert viewers into loyal customers.'
+              : 'Konten video kreatif yang didesain khusus untuk menarik perhatian audiens, membangun branding, dan mengonversi viewers menjadi pembeli loyal.'}
           </p>
         </div>
 
@@ -143,7 +147,7 @@ const ShortVideos: React.FC = () => {
                     {/* Hint for users */}
                     <div className="text-center opacity-80 group-hover:opacity-100 transition-opacity duration-300">
                       <p className="text-white text-xs font-bold tracking-widest uppercase bg-black/40 backdrop-blur-sm inline-block px-4 py-2 rounded-full">
-                        Click to Play
+                        {language === 'en' ? 'Click to Play' : 'Klik untuk Putar'}
                       </p>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, ZoomIn, ExternalLink } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
 
 interface DesignItem {
   id: string;
@@ -7,6 +8,7 @@ interface DesignItem {
 }
 
 const GraphicDesignPortfolio: React.FC = () => {
+  const { language } = useLanguage();
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -93,8 +95,10 @@ const GraphicDesignPortfolio: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-10 sm:mb-16 relative">
           <h3 className="text-[24px] sm:text-5xl md:text-6xl font-[900] text-slate-900 leading-tight mb-4">Social Media Design</h3>
-          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4">
-            Karya desain grafis kreatif dan profesional yang dirancang khusus untuk memperkuat identitas brand dan menarik interaksi audiens
+          <p className="text-sm sm:text-xl text-slate-500 max-w-4xl mx-auto leading-relaxed px-4 font-medium">
+            {language === 'en'
+              ? 'Creative and professional graphic design work specifically tailored to strengthen brand identity and attract audience interaction.'
+              : 'Karya desain grafis kreatif dan profesional yang dirancang khusus untuk memperkuat identitas brand dan menarik interaksi audiens'}
           </p>
         </div>
 
@@ -163,7 +167,9 @@ const GraphicDesignPortfolio: React.FC = () => {
 
         {/* Swipe instructions helper hint on mobile */}
         <div className="text-center mt-6 block sm:hidden">
-          <p className="text-xs text-slate-400 italic">Geser untuk melihat kreasi lainnya &rarr;</p>
+          <p className="text-xs text-slate-400 italic">
+            {language === 'en' ? 'Swipe to view more designs \u2192' : 'Geser untuk melihat kreasi lainnya \u2192'}
+          </p>
         </div>
       </div>
 
