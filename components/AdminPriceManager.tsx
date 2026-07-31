@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tag, Plus, Edit, Trash2, RefreshCw, Save, Percent, Check, X, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
-import { PricePlan, defaultPricePlans, calculateDiscountPercentage } from './priceData';
+import { PricePlan, defaultPricePlans, calculateDiscountPercentage, formatPriceInput } from './priceData';
 import { supabase } from '../lib/supabase';
 
 export const AdminPriceManager: React.FC = () => {
@@ -76,7 +76,10 @@ export const AdminPriceManager: React.FC = () => {
   };
 
   const handleEditClick = (plan: PricePlan) => {
-    setEditingPlan(JSON.parse(JSON.stringify(plan)));
+    const copy: PricePlan = JSON.parse(JSON.stringify(plan));
+    if (copy.amount) copy.amount = formatPriceInput(copy.amount);
+    if (copy.original_amount) copy.original_amount = formatPriceInput(copy.original_amount);
+    setEditingPlan(copy);
     setIsModalOpen(true);
   };
 
@@ -340,10 +343,10 @@ export const AdminPriceManager: React.FC = () => {
                       required
                       placeholder="Misal: 9.000.000 atau Custom Pricing"
                       value={editingPlan.amount}
-                      onChange={(e) => setEditingPlan({ ...editingPlan, amount: e.target.value })}
+                      onChange={(e) => setEditingPlan({ ...editingPlan, amount: formatPriceInput(e.target.value) })}
                       className="w-full px-4 py-3 bg-white border border-yellow-400 rounded-xl focus:ring-2 focus:ring-yellow-500 font-black text-slate-900 text-base shadow-sm"
                     />
-                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Tulis tanpa "Rp", contoh: 9.000.000</p>
+                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Format otomatis: xx.xxx.xxx (Contoh: 9.000.000)</p>
                   </div>
 
                   {/* Strikethrough Price (Harga Coret) */}
@@ -356,10 +359,10 @@ export const AdminPriceManager: React.FC = () => {
                       type="text"
                       placeholder="Misal: 12.000.000 (Opsional)"
                       value={editingPlan.original_amount || ''}
-                      onChange={(e) => setEditingPlan({ ...editingPlan, original_amount: e.target.value })}
+                      onChange={(e) => setEditingPlan({ ...editingPlan, original_amount: formatPriceInput(e.target.value) })}
                       className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-500 font-bold text-slate-900 text-base shadow-sm"
                     />
-                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Akan ditampilkan sebagai harga yang dicoret</p>
+                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Format otomatis: xx.xxx.xxx (Harga yang dicoret)</p>
                   </div>
                 </div>
 

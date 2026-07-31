@@ -129,3 +129,16 @@ export const calculateDiscountPercentage = (amount: string, originalAmount?: str
   const pct = Math.round(((numOrig - numCurrent) / numOrig) * 100);
   return `${pct}%`;
 };
+
+export const formatPriceInput = (val: string): string => {
+  if (!val) return '';
+  // If string contains alphabetic characters (e.g. "Custom Pricing"), keep as is
+  if (/[a-zA-Z]/.test(val)) {
+    return val;
+  }
+  // Strip non-digits and format with thousands separator dots (xx.xxx.xxx)
+  const cleanDigits = val.replace(/\D/g, '');
+  if (!cleanDigits) return val;
+  return parseInt(cleanDigits, 10).toLocaleString('id-ID');
+};
+
