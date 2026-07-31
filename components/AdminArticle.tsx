@@ -1,15 +1,18 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, PenTool, Send, Image as ImageIcon, AlignLeft, Edit, Trash2, Plus, ArrowLeft } from 'lucide-react';
+import { Lock, PenTool, Send, Image as ImageIcon, AlignLeft, Edit, Trash2, Plus, ArrowLeft, Tag } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { supabase } from '../lib/supabase';
 import { convertDriveUrl } from '../lib/utils';
+import { useAdmin } from './AdminContext';
+import { AdminPriceManager } from './AdminPriceManager';
 
 const AdminArticle: React.FC = () => {
+  const { isAdmin, loginAdmin } = useAdmin();
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [activeTab, setActiveTab] = useState<'articles' | 'prices'>('articles');
   const [view, setView] = useState<'list' | 'form'>('list');
   const [editingId, setEditingId] = useState<number | null>(null);
   
@@ -116,10 +119,15 @@ const AdminArticle: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (isAdmin) {
+      fetchArticles();
+    }
+  }, [isAdmin]);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'visibel-admin') {
-      setIsAuthenticated(true);
+    if (loginAdmin(password)) {
       setError('');
       fetchArticles();
     } else {
@@ -232,7 +240,7 @@ const AdminArticle: React.FC = () => {
     }
   };
 
-  if (!isAuthenticated) {
+  if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 pt-24 px-4">
         <div className="bg-white p-10 rounded-[32px] shadow-2xl w-full max-w-md border border-slate-100">
@@ -268,10 +276,45 @@ const AdminArticle: React.FC = () => {
   }
 
   return (
-    <section className="pt-32 pb-24 bg-slate-50 min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="pt-28 pb-24 bg-slate-50 min-h-screen">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {view === 'list' ? (
+        {/* Navigation Tabs Header */}
+        <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-3 sm:p-4 rounded-3xl border border-slate-200/80 shadow-sm mb-8 gap-4">
+          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl w-full sm:w-auto">
+            <button
+              onClick={() => { setActiveTab('articles'); setView('list'); }}
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all ${
+                activeTab === 'articles'
+                  ? 'bg-slate-900 text-yellow-400 shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <PenTool size={16} /> Kelola Artikel
+            </button>
+            <button
+              onClick={() => setActiveTab('prices')}
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all ${
+                activeTab === 'prices'
+                  ? 'bg-slate-900 text-yellow-400 shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Tag size={16} /> Kelola Price List
+            </button>
+          </div>
+
+          <button
+            onClick={() => navigate('/')}
+            className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-2 bg-slate-50 hover:bg-slate-100 px-4 py-2.5 rounded-xl border border-slate-200 transition-colors w-full sm:w-auto justify-center"
+          >
+            <ArrowLeft size={14} className="text-yellow-600" /> Lihat Website
+          </button>
+        </div>
+
+        {activeTab === 'prices' ? (
+          <AdminPriceManager />
+        ) : view === 'list' ? (
           /* LIST VIEW */
           <div className="space-y-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">

@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Check, Edit, Lock, Unlock, Plus, Trash2, X, Save, Percent, Tag, RefreshCw, Sparkles, ShieldCheck } from 'lucide-react';
-import { useLanguage } from './LanguageContext';
-import { useAdmin } from './AdminContext';
+import { Tag, Plus, Edit, Trash2, RefreshCw, Save, Percent, Check, X, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
 import { PricePlan, defaultPricePlans, calculateDiscountPercentage } from './priceData';
 import { supabase } from '../lib/supabase';
 
-const PriceList: React.FC = () => {
-  const { language, t } = useLanguage();
-  const { isAdmin, loginAdmin, logoutAdmin } = useAdmin();
-  const waUrl = "https://wa.me/628111743005";
-
+export const AdminPriceManager: React.FC = () => {
   const [plans, setPlans] = useState<PricePlan[]>(() => {
     const saved = localStorage.getItem('visibel_price_plans');
     if (saved) {
@@ -25,12 +19,8 @@ const PriceList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [editingPlan, setEditingPlan] = useState<PricePlan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [adminPasswordInput, setAdminPasswordInput] = useState('');
-  const [authError, setAuthError] = useState('');
-  const [saveStatus, setSaveStatus] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  // Fetch from Supabase on mount
   useEffect(() => {
     fetchPricePlans();
   }, []);
@@ -62,43 +52,13 @@ const PriceList: React.FC = () => {
         localStorage.setItem('visibel_price_plans', JSON.stringify(formattedPlans));
       }
     } catch (err) {
-      console.warn('Using local cached price plans:', err);
+      console.warn('Using local price plans:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenAuthModal = () => {
-    setAuthError('');
-    setAdminPasswordInput('');
-    setIsAuthModalOpen(true);
-  };
-
-  const handleAdminLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loginAdmin(adminPasswordInput)) {
-      setIsAuthModalOpen(false);
-      setAdminPasswordInput('');
-      setAuthError('');
-    } else {
-      setAuthError('Password admin salah! (Default: visibel-admin)');
-    }
-  };
-
-  const handleEditClick = (plan: PricePlan) => {
-    if (!isAdmin) {
-      handleOpenAuthModal();
-      return;
-    }
-    setEditingPlan(JSON.parse(JSON.stringify(plan)));
-    setIsModalOpen(true);
-  };
-
   const handleAddNewPlan = () => {
-    if (!isAdmin) {
-      handleOpenAuthModal();
-      return;
-    }
     const newPlan: PricePlan = {
       id: `plan-${Date.now()}`,
       title_id: 'Paket Baru',
@@ -115,8 +75,13 @@ const PriceList: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleEditClick = (plan: PricePlan) => {
+    setEditingPlan(JSON.parse(JSON.stringify(plan)));
+    setIsModalOpen(true);
+  };
+
   const handleResetToDefault = () => {
-    if (!window.confirm('Apakah Anda yakin ingin mengembalikan daftar harga ke standar awal?')) return;
+    if (!window.confirm('Apakah Anda yakin ingin mengembalikan daftar paket harga ke standar awal?')) return;
     setPlans(defaultPricePlans);
     localStorage.setItem('visibel_price_plans', JSON.stringify(defaultPricePlans));
     syncToSupabase(defaultPricePlans);
@@ -139,12 +104,11 @@ const PriceList: React.FC = () => {
     localStorage.setItem('visibel_price_plans', JSON.stringify(updatedPlans));
     setIsModalOpen(false);
 
-    // Sync to Supabase
     await syncToSupabase(updatedPlans, editingPlan);
   };
 
   const handleDeletePlan = async (id: string) => {
-    if (!window.confirm('Hapus paket harga ini?')) return;
+    if (!window.confirm('Apakah Anda yakin ingin menghapus paket harga ini?')) return;
     const updatedPlans = plans.filter((p) => p.id !== id);
     setPlans(updatedPlans);
     localStorage.setItem('visibel_price_plans', JSON.stringify(updatedPlans));
@@ -153,12 +117,12 @@ const PriceList: React.FC = () => {
     try {
       await supabase.from('price_plans').delete().eq('id', id);
     } catch (err) {
-      console.error('Delete Supabase error:', err);
+      console.error('Delete error:', err);
     }
   };
 
   const syncToSupabase = async (allPlans: PricePlan[], targetPlan?: PricePlan) => {
-    setSaveStatus('Menyimpan ke database...');
+    setStatusMessage('Menyimpan perubahan...');
     try {
       const itemsToUpsert = targetPlan ? [targetPlan] : allPlans;
       
@@ -178,190 +142,141 @@ const PriceList: React.FC = () => {
       const { error } = await supabase.from('price_plans').upsert(upsertPayload);
 
       if (error) {
-        console.warn('Supabase upsert note:', error.message);
-        setSaveStatus('Tersimpan di Lokal (Supabase butuh skema)');
+        console.warn('Supabase note:', error.message);
+        setStatusMessage('Tersimpan di Penyimpanan Lokal Website');
       } else {
-        setSaveStatus('Berhasil tersimpan ke Database!');
+        setStatusMessage('Berhasil tersimpan ke Database Supabase & Website!');
       }
     } catch (err: any) {
       console.error('Sync error:', err);
-      setSaveStatus('Tersimpan di Lokal');
+      setStatusMessage('Tersimpan di Penyimpanan Lokal Website');
     } finally {
-      setTimeout(() => setSaveStatus(null), 3000);
+      setTimeout(() => setStatusMessage(null), 3500);
     }
   };
 
   return (
-    <section id="price-list" className="py-24 bg-white scroll-mt-20 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header section */}
-        <div className="flex flex-col items-center justify-center text-center mb-16 relative">
-          <h2 className="text-yellow-600 font-bold tracking-widest uppercase text-sm mb-4">
-            {language === 'en' ? 'PRICE PLANS & INVESTMENT' : 'PAKET HARGA & INVESTASI'}
+    <div className="space-y-8 animate-fade-in">
+      {/* Top action header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white p-6 sm:p-8 rounded-[32px] border border-slate-200/80 shadow-sm">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-500 rounded-2xl flex items-center justify-center text-slate-900 shadow-md">
+              <Tag size={24} />
+            </div>
+            Pengaturan Price List
           </h2>
-
-          <h3 className="text-[24px] sm:text-4xl md:text-5xl font-[900] text-slate-900 leading-tight">
-            {t('price.title')}
-          </h3>
+          <p className="text-slate-500 font-bold text-xs sm:text-sm mt-1">
+            Ubah harga, tambah harga coret, persentase diskon, dan rincian paket di sini.
+          </p>
         </div>
 
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 items-stretch">
-          {plans.map((plan) => {
-            const title = language === 'en' ? plan.title_en || plan.title_id : plan.title_id;
-            const features = language === 'en' ? plan.features_en || plan.features_id : plan.features_id;
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleAddNewPlan}
+            className="bg-yellow-500 hover:bg-yellow-600 text-slate-900 px-5 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all active:scale-95"
+          >
+            <Plus size={18} /> Tambah Paket Baru
+          </button>
+          <button
+            onClick={handleResetToDefault}
+            className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
+            title="Reset ke harga standar"
+          >
+            <RefreshCw size={14} /> Reset Default
+          </button>
+        </div>
+      </div>
 
-            // Auto-calculate discount percentage if not manually specified
-            const autoDiscountPct = calculateDiscountPercentage(plan.amount, plan.original_amount);
-            const discountLabel = plan.discount_percentage || (autoDiscountPct ? `${language === 'en' ? 'SAVE' : 'HEMAT'} ${autoDiscountPct}` : null);
+      {/* Save Notification Toast */}
+      {statusMessage && (
+        <div className="bg-slate-900 text-yellow-400 p-4 rounded-2xl font-bold text-sm flex items-center justify-between shadow-xl border border-yellow-500/30 animate-fade-in">
+          <div className="flex items-center gap-2">
+            <Sparkles size={18} />
+            <span>{statusMessage}</span>
+          </div>
+          <button onClick={() => setStatusMessage(null)} className="text-slate-400 hover:text-white">
+            <X size={16} />
+          </button>
+        </div>
+      )}
 
-            return (
-              <div 
-                key={plan.id} 
-                className={`relative bg-white rounded-[24px] sm:rounded-[40px] px-5 pb-5 pt-6 sm:px-8 sm:pb-8 sm:pt-10 border flex flex-col h-full transition-all duration-500 ease-out hover:-translate-y-2 hover:scale-[1.01] group ${
-                  plan.recommended 
-                    ? 'border-yellow-500 ring-4 ring-yellow-500/10 z-10 shadow-2xl shadow-yellow-500/20' 
-                    : 'border-slate-100 shadow-sm hover:border-yellow-400 hover:shadow-xl'
-                }`}
-              >
-                {/* Admin Quick Edit Button overlay on card */}
-                {isAdmin && (
-                  <button
-                    onClick={() => handleEditClick(plan)}
-                    className="absolute top-4 right-4 bg-slate-900 text-yellow-400 hover:bg-yellow-500 hover:text-slate-900 p-2 rounded-full shadow-md transition-all z-30"
-                    title="Edit Paket ini"
-                  >
-                    <Edit size={16} />
-                  </button>
-                )}
+      {/* Grid of Current Price Plans */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {plans.map((plan) => {
+          const autoDiscount = calculateDiscountPercentage(plan.amount, plan.original_amount);
+          const discountPill = plan.discount_percentage || (autoDiscount ? `HEMAT ${autoDiscount}` : null);
 
-                {/* Best Seller Badge */}
-                {plan.recommended && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-900 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest whitespace-nowrap z-20 shadow-md">
-                    {t('price.bestSeller')}
-                  </div>
-                )}
+          return (
+            <div 
+              key={plan.id}
+              className={`bg-white rounded-[28px] p-6 sm:p-8 border-2 relative flex flex-col justify-between transition-all hover:shadow-xl ${
+                plan.recommended ? 'border-yellow-500 ring-4 ring-yellow-500/10' : 'border-slate-200'
+              }`}
+            >
+              {plan.recommended && (
+                <div className="absolute top-4 right-4 bg-yellow-500 text-slate-900 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                  Best Seller
+                </div>
+              )}
 
-                <div className="mb-6 sm:mb-8 flex flex-col">
-                  {/* Plan Name */}
-                  <span className={`font-[1000] text-slate-900 leading-tight tracking-tighter mb-2 ${
-                    title.length > 15 ? 'text-lg sm:text-xl' : 'text-xl sm:text-3xl'
-                  }`}>
-                    {title}
-                  </span>
+              <div>
+                <div className="mb-4">
+                  <h3 className="text-2xl font-black text-slate-900 mb-1">{plan.title_id}</h3>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">{plan.title_en}</p>
+                </div>
 
-                  {/* Pricing Box with Strikethrough & Discount Tag */}
-                  <div className="flex flex-col space-y-1">
-                    {/* Strikethrough Price (Harga Coret) & Discount Pill */}
-                    {plan.original_amount && (
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="line-through text-slate-400 font-bold text-xs sm:text-sm">
-                          {isNaN(Number(plan.original_amount.replace(/\./g, ''))) ? plan.original_amount : `Rp ${plan.original_amount}`}
-                        </span>
-                        {discountLabel && (
-                          <span className="bg-red-500 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm animate-pulse">
-                            {discountLabel}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Main Price (Harga Utama) */}
-                    {plan.amount && (
-                      <span className="font-black text-slate-900 text-xl sm:text-2xl tracking-tight">
-                        {isNaN(Number(plan.amount.replace(/\./g, ''))) ? plan.amount : `Rp ${plan.amount}`}
+                {/* Price Display */}
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-6 space-y-1">
+                  {plan.original_amount && (
+                    <div className="flex items-center gap-2">
+                      <span className="line-through text-slate-400 font-bold text-sm">
+                        {isNaN(Number(plan.original_amount.replace(/\./g, ''))) ? plan.original_amount : `Rp ${plan.original_amount}`}
                       </span>
-                    )}
+                      {discountPill && (
+                        <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
+                          {discountPill}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                  <div className="text-2xl font-black text-slate-900">
+                    {isNaN(Number(plan.amount.replace(/\./g, ''))) ? plan.amount : `Rp ${plan.amount}`}
                   </div>
                 </div>
 
                 {/* Features List */}
-                <ul className="space-y-3 sm:space-y-4 mb-8 sm:mb-10 flex-grow">
-                  {features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start text-slate-700 font-bold text-[10px] sm:text-sm leading-tight">
-                      <div className="mt-0.5 mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="space-y-2 mb-6">
+                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Fitur Paket ({plan.features_id.length}):</p>
+                  {plan.features_id.map((f, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                      <div className="w-4 h-4 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
                         <Check size={10} strokeWidth={4} />
                       </div>
-                      {feature}
-                    </li>
+                      <span>{f}</span>
+                    </div>
                   ))}
-                </ul>
-
-                {/* Call To Action Button */}
-                <div className="mt-auto">
-                  <a 
-                    href={`${waUrl}?text=${encodeURIComponent(`Halo Visibel Agency, saya tertarik untuk memilih paket: ${title}`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-full py-3 sm:py-5 rounded-xl sm:rounded-2xl font-[900] text-center block transition-all text-[10px] sm:text-sm shadow-lg uppercase tracking-wider ${
-                      plan.recommended 
-                        ? 'bg-yellow-500 text-slate-900 hover:bg-yellow-600 shadow-yellow-500/20 active:scale-95' 
-                        : 'bg-[#0f172a] text-white hover:bg-black shadow-slate-200/50 active:scale-95'
-                    }`}
-                  >
-                    {t('price.choose')}
-                  </a>
                 </div>
               </div>
-            );
-          })}
-        </div>
+
+              {/* Edit Button */}
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase">Urutan: #{plan.order}</span>
+                <button
+                  onClick={() => handleEditClick(plan)}
+                  className="bg-slate-900 hover:bg-slate-800 text-yellow-400 px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all"
+                >
+                  <Edit size={14} /> Edit Harga & Fitur
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* ADMIN AUTH MODAL */}
-      {isAuthModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md p-8 rounded-[32px] shadow-2xl border border-slate-100 relative animate-fade-in">
-            <button
-              onClick={() => setIsAuthModalOpen(false)}
-              className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 p-2 rounded-full hover:bg-slate-100 transition-all"
-            >
-              <X size={20} />
-            </button>
-            <div className="w-14 h-14 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-600 mb-6 mx-auto">
-              <Lock size={28} />
-            </div>
-            <h3 className="text-2xl font-black text-center text-slate-900 mb-2">Akses Admin</h3>
-            <p className="text-center text-slate-400 text-xs font-bold uppercase tracking-widest mb-6">
-              Masukkan password admin untuk mengubah harga paket
-            </p>
-
-            <form onSubmit={handleAdminLoginSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-widest">
-                  Password Admin
-                </label>
-                <input
-                  type="password"
-                  value={adminPasswordInput}
-                  onChange={(e) => setAdminPasswordInput(e.target.value)}
-                  placeholder="Masukkan password..."
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-yellow-500 focus:outline-none font-bold text-slate-900"
-                  autoFocus
-                />
-              </div>
-
-              {authError && (
-                <p className="text-red-500 font-bold text-xs text-center bg-red-50 p-2.5 rounded-xl border border-red-200">
-                  {authError}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 transition-all shadow-lg"
-              >
-                Masuk Mode Admin
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ADMIN EDIT PRICE PLAN MODAL */}
+      {/* MODAL FOR EDITING PRICE PLAN */}
       {isModalOpen && editingPlan && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white w-full max-w-2xl my-8 p-6 sm:p-10 rounded-[36px] shadow-2xl border border-slate-100 relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsModalOpen(false)}
@@ -377,13 +292,13 @@ const PriceList: React.FC = () => {
               <div>
                 <h3 className="text-2xl font-black text-slate-900">Edit Paket Harga</h3>
                 <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
-                  Pengaturan harga, potongan diskon, dan fitur paket
+                  Atur harga aktif, harga coret, persentase diskon & deskripsi
                 </p>
               </div>
             </div>
 
             <form onSubmit={handleSavePlan} className="space-y-6">
-              {/* Titles in ID and EN */}
+              {/* Names */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-widest">
@@ -411,66 +326,66 @@ const PriceList: React.FC = () => {
                 </div>
               </div>
 
-              {/* Price & Strikethrough Price & Discount Label */}
-              <div className="bg-yellow-50/60 p-5 rounded-2xl border border-yellow-200/60 space-y-4">
+              {/* Pricing section */}
+              <div className="bg-yellow-50/70 p-5 rounded-2xl border border-yellow-200/80 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Current Active Price */}
+                  {/* Current Main Price */}
                   <div>
                     <label className="block text-xs font-black text-slate-800 mb-1.5 uppercase tracking-widest flex items-center gap-1.5">
                       <Tag size={14} className="text-yellow-600" />
-                      Harga Utama (Aktif)
+                      Harga Utama (Harga Akhir)
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="Contoh: 9.000.000 atau Custom Pricing"
+                      placeholder="Misal: 9.000.000 atau Custom Pricing"
                       value={editingPlan.amount}
                       onChange={(e) => setEditingPlan({ ...editingPlan, amount: e.target.value })}
-                      className="w-full px-4 py-3 bg-white border border-yellow-300 rounded-xl focus:ring-2 focus:ring-yellow-500 font-black text-slate-900 text-base shadow-sm"
+                      className="w-full px-4 py-3 bg-white border border-yellow-400 rounded-xl focus:ring-2 focus:ring-yellow-500 font-black text-slate-900 text-base shadow-sm"
                     />
-                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Format angka misal: 9.000.000 (otomatis ditambah 'Rp ')</p>
+                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Tulis tanpa "Rp", contoh: 9.000.000</p>
                   </div>
 
                   {/* Strikethrough Price (Harga Coret) */}
                   <div>
                     <label className="block text-xs font-black text-slate-800 mb-1.5 uppercase tracking-widest flex items-center gap-1.5">
                       <Percent size={14} className="text-red-500" />
-                      Harga Coret (Original Price)
+                      Harga Coret (Harga Sebelum Diskon)
                     </label>
                     <input
                       type="text"
-                      placeholder="Contoh: 12.000.000 (Opsional)"
+                      placeholder="Misal: 12.000.000 (Opsional)"
                       value={editingPlan.original_amount || ''}
                       onChange={(e) => setEditingPlan({ ...editingPlan, original_amount: e.target.value })}
                       className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-500 font-bold text-slate-900 text-base shadow-sm"
                     />
-                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Isi harga sebelum diskon untuk tampil dicoret</p>
+                    <p className="text-[10px] text-slate-500 mt-1 font-medium">Akan ditampilkan sebagai harga yang dicoret</p>
                   </div>
                 </div>
 
-                {/* Custom Discount Badge / Percentage */}
+                {/* Discount Percentage / Label */}
                 <div>
                   <label className="block text-xs font-black text-slate-800 mb-1.5 uppercase tracking-widest">
-                    Tulisan Potongan / Label Diskon (Opsional)
+                    Tulisan Diskon / Potongan % (Opsional)
                   </label>
                   <input
                     type="text"
-                    placeholder={`Kosongkan untuk auto-hitung, atau isi misal: "Hemat 25%" / "25% OFF"`}
+                    placeholder='Kosongkan jika ingin dihitung otomatis, atau tulis misal: "25%" / "HEMAT 25%"'
                     value={editingPlan.discount_percentage || ''}
                     onChange={(e) => setEditingPlan({ ...editingPlan, discount_percentage: e.target.value })}
                     className="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-yellow-500 font-bold text-slate-900 text-sm"
                   />
                   <p className="text-[10px] text-slate-500 mt-1 font-medium">
-                    Jika dikosongkan dan Harga Coret diisi, persentase diskon akan dihitung otomatis.
+                    Jika dikosongkan & Harga Coret diisi, sistem akan menghitung persentase diskon secara otomatis.
                   </p>
                 </div>
               </div>
 
-              {/* Recommended Badge Toggle */}
+              {/* Recommended Badge */}
               <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
                 <div>
                   <span className="text-xs font-black text-slate-900 block uppercase tracking-wider">Lencana Best Seller (Rekomendasi)</span>
-                  <span className="text-[11px] text-slate-500 font-medium">Menampilkan frame emas & badge terpopuler</span>
+                  <span className="text-[11px] text-slate-500 font-medium">Menampilkan border kuning & badge Best Seller</span>
                 </div>
                 <input
                   type="checkbox"
@@ -480,7 +395,7 @@ const PriceList: React.FC = () => {
                 />
               </div>
 
-              {/* Features List Editing (ID) */}
+              {/* Features ID */}
               <div>
                 <label className="block text-xs font-black text-slate-800 mb-2 uppercase tracking-widest">
                   Daftar Fitur (Bahasa Indonesia)
@@ -520,7 +435,7 @@ const PriceList: React.FC = () => {
                 </div>
               </div>
 
-              {/* Features List Editing (EN) */}
+              {/* Features EN */}
               <div>
                 <label className="block text-xs font-black text-slate-800 mb-2 uppercase tracking-widest">
                   Daftar Fitur (English)
@@ -560,7 +475,7 @@ const PriceList: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Buttons */}
               <div className="flex items-center justify-between gap-4 pt-4 border-t border-slate-100">
                 <button
                   type="button"
@@ -590,8 +505,6 @@ const PriceList: React.FC = () => {
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 };
-
-export default PriceList;

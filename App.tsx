@@ -11,30 +11,32 @@ import AdminArticle from './components/AdminArticle';
 import CareerForm from './components/CareerForm';
 import Footer from './components/Footer';
 import { LanguageProvider } from './components/LanguageContext';
+import { AdminProvider } from './components/AdminContext';
 
 const App: React.FC = () => {
   return (
-    <LanguageProvider>
-      <Router>
-        <div className="min-h-screen">
-          <Navbar />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/kalkulator" element={<Calculator />} />
-              <Route path="/kalkulator-ads" element={<AdsCalculator />} />
-              <Route path="/articles" element={<ArticleList />} />
-              <Route path="/article/:id" element={<ArticleDetail />} />
-              <Route path="/karir" element={<CareerForm />} />
-              <Route path="/admin" element={<AdminArticle />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
-    </LanguageProvider>
+    <AdminProvider>
+      <LanguageProvider>
+        <Router>
+          <div className="min-h-screen">
+            <Navbar />
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/kalkulator" element={<Calculator />} />
+                <Route path="/kalkulator-ads" element={<AdsCalculator />} />
+                <Route path="/articles" element={<ArticleList />} />
+                <Route path="/article/:id" element={<ArticleDetail />} />
+                <Route path="/karir" element={<CareerForm />} />
+                <Route path="/admin" element={<AdminArticle />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </LanguageProvider>
+    </AdminProvider>
   );
 };
-
 
 export default App;
