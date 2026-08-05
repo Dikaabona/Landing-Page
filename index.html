@@ -84,23 +84,46 @@
         }
 
         .article-content {
-          line-height: 1.8;
+          line-height: 1.75;
+          font-size: 0.9375rem; /* 15px default */
+          color: #334155;
         }
+
+        .article-content p,
+        .article-content div,
+        .article-content span,
+        .article-content li {
+          font-size: 0.9375rem;
+          line-height: 1.75;
+          color: #334155;
+          margin-bottom: 1.25rem;
+        }
+
+        .article-content h1 { font-size: 1.5rem !important; font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #0f172a; }
+        .article-content h2 { font-size: 1.25rem !important; font-weight: 800; margin-top: 1.25rem; margin-bottom: 0.6rem; color: #0f172a; }
+        .article-content h3 { font-size: 1.1rem !important; font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; color: #0f172a; }
 
         .article-content,
         .article-content *,
         .prose,
         .prose * {
           word-break: normal !important;
-          word-wrap: break-word !important;
+          word-wrap: normal !important;
           overflow-wrap: break-word !important;
           white-space: normal !important;
           -webkit-hyphens: none !important;
           -moz-hyphens: none !important;
           -ms-hyphens: none !important;
           hyphens: none !important;
-          text-align: justify !important;
-          text-justify: inter-word !important;
+          text-align: left !important;
+          text-justify: none !important;
+        }
+
+        .article-content .ql-align-center {
+          text-align: center !important;
+        }
+        .article-content .ql-align-right {
+          text-align: right !important;
         }
 
         @media (max-width: 768px) {
@@ -113,13 +136,19 @@
             word-break: normal !important;
           }
           
+          .article-content p,
+          .article-content div,
+          .article-content span,
+          .article-content li,
           .prose {
-            font-size: 15px !important;
+            font-size: 0.875rem !important; /* 14px on mobile */
+            line-height: 1.65 !important;
+            margin-bottom: 1rem;
           }
 
-          .prose h1 { font-size: 1.75rem !important; }
-          .prose h2 { font-size: 1.5rem !important; }
-          .prose h3 { font-size: 1.25rem !important; }
+          .prose h1, .article-content h1 { font-size: 1.3rem !important; }
+          .prose h2, .article-content h2 { font-size: 1.15rem !important; }
+          .prose h3, .article-content h3 { font-size: 1.05rem !important; }
         }
 
         .article-content img {

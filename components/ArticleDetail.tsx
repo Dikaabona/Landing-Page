@@ -75,17 +75,17 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <article className="pt-24 sm:pt-32 pb-24 bg-white overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 w-full">
-        <Link to="/articles" className="inline-flex items-center gap-2 text-slate-400 font-bold hover:text-slate-900 transition-colors mb-8 sm:mb-12 uppercase tracking-widest text-[10px] sm:text-xs">
+      <div className="max-w-3xl mx-auto px-5 sm:px-8 lg:px-10 w-full">
+        <Link to="/articles" className="inline-flex items-center gap-2 text-slate-400 font-bold hover:text-slate-900 transition-colors mb-6 sm:mb-8 uppercase tracking-widest text-[10px] sm:text-xs">
           <ArrowLeft size={16} className="text-yellow-500" /> {language === 'en' ? 'Back' : 'Kembali'}
         </Link>
 
-        <header className="mb-10 sm:mb-12">
-          <h1 className="text-3xl sm:text-6xl font-black text-slate-900 mb-6 sm:mb-8 leading-[1.1] tracking-tight">
+        <header className="mb-8 sm:mb-10">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-5 sm:mb-6 leading-tight tracking-tight">
             {article.title}
           </h1>
           
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 py-6 sm:py-8 border-y border-slate-100">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 py-4 sm:py-6 border-y border-slate-100">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-yellow-500 flex items-center justify-center text-slate-900">
                 <User size={16} className="sm:w-5 sm:h-5" />
@@ -94,7 +94,7 @@ const ArticleDetail: React.FC = () => {
                 <span className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">
                   {language === 'en' ? 'Author' : 'Penulis'}
                 </span>
-                <span className="text-slate-900 font-bold text-xs sm:text-base">{article.author}</span>
+                <span className="text-slate-900 font-bold text-xs sm:text-sm">{article.author}</span>
               </div>
             </div>
             
@@ -102,20 +102,20 @@ const ArticleDetail: React.FC = () => {
               <span className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">
                 {language === 'en' ? 'Published' : 'Diterbitkan'}
               </span>
-              <span className="text-slate-900 font-bold flex items-center gap-2 text-xs sm:text-base">
+              <span className="text-slate-900 font-bold flex items-center gap-2 text-xs sm:text-sm">
                 <Calendar size={14} className="text-yellow-500" />
                 {new Date(article.created_at).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
             </div>
 
-            <button className="ml-auto p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors">
-              <Share2 size={18} className="sm:w-5 sm:h-5" />
+            <button className="ml-auto p-2.5 sm:p-3 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors">
+              <Share2 size={16} className="sm:w-4 sm:h-4" />
             </button>
           </div>
         </header>
 
         {article.image && (
-          <div className="aspect-video rounded-2xl sm:rounded-[40px] overflow-hidden mb-12 sm:mb-16 shadow-2xl">
+          <div className="aspect-video rounded-2xl sm:rounded-[32px] overflow-hidden mb-8 sm:mb-12 shadow-xl">
             <img 
               src={convertDriveUrl(article.image)} 
               alt="" 
@@ -126,7 +126,7 @@ const ArticleDetail: React.FC = () => {
         )}
 
         <div 
-          className="prose prose-slate sm:prose-lg max-w-full article-content prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-3xl prose-img:shadow-lg"
+          className="prose prose-sm sm:prose-base max-w-full article-content text-left prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-2xl prose-img:shadow-md"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
 
