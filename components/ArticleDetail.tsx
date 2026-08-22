@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, ArrowLeft, User, Share2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { convertDriveUrl } from '../lib/utils';
+import { convertDriveUrl, cleanArticleHtml } from '../lib/utils';
 import { useLanguage } from './LanguageContext';
 
 interface Article {
@@ -75,7 +75,7 @@ const ArticleDetail: React.FC = () => {
 
   return (
     <article className="pt-24 sm:pt-32 pb-24 bg-white overflow-hidden">
-      <div className="max-w-3xl mx-auto px-5 sm:px-8 lg:px-10 w-full">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-12 w-full">
         <Link to="/articles" className="inline-flex items-center gap-2 text-slate-400 font-bold hover:text-slate-900 transition-colors mb-6 sm:mb-8 uppercase tracking-widest text-[10px] sm:text-xs">
           <ArrowLeft size={16} className="text-yellow-500" /> {language === 'en' ? 'Back' : 'Kembali'}
         </Link>
