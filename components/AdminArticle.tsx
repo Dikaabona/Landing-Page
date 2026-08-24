@@ -5,7 +5,7 @@ import { Lock, PenTool, Send, Image as ImageIcon, AlignLeft, Edit, Trash2, Plus,
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { supabase } from '../lib/supabase';
-import { convertDriveUrl } from '../lib/utils';
+import { convertDriveUrl, cleanArticleHtml } from '../lib/utils';
 import { useAdmin } from './AdminContext';
 import { AdminPriceManager } from './AdminPriceManager';
 
@@ -198,9 +198,9 @@ const AdminArticle: React.FC = () => {
     setError('');
     
     const articleData = {
-      title,
-      excerpt,
-      content,
+      title: title.trim(),
+      excerpt: excerpt.trim(),
+      content: cleanArticleHtml(content),
       image: convertDriveUrl(image),
       author: 'Admin Visibel',
     };

@@ -127,7 +127,7 @@ const ArticleDetail: React.FC = () => {
 
         <div 
           className="prose prose-sm sm:prose-base max-w-full article-content text-left prose-headings:font-black prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:leading-relaxed prose-strong:text-slate-900 prose-img:rounded-2xl prose-img:shadow-md"
-          dangerouslySetInnerHTML={{ __html: article.content }}
+          dangerouslySetInnerHTML={{ __html: cleanArticleHtml(article.content) }}
         />
 
         <footer className="mt-20 pt-12 border-t border-slate-100">
