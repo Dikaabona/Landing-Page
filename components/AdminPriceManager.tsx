@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Tag, Plus, Edit, Trash2, RefreshCw, Save, Percent, Check, X, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
+import { Tag, Plus, Edit, Trash2, RefreshCw, Save, Percent, Check, X, ShieldCheck, Sparkles, AlertCircle, Database, Copy, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { PricePlan, defaultPricePlans, calculateDiscountPercentage, formatPriceInput } from './priceData';
 import { supabase } from '../lib/supabase';
 
@@ -17,9 +17,13 @@ export const AdminPriceManager: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [editingPlan, setEditingPlan] = useState<PricePlan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'warning' | 'error' } | null>(null);
+  const [dbConnected, setDbConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
     fetchPricePlans();
@@ -33,13 +37,18 @@ export const AdminPriceManager: React.FC = () => {
         .select('*')
         .order('order', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        setDbConnected(false);
+        throw error;
+      }
+
+      setDbConnected(true);
 
       if (data && data.length > 0) {
         const formattedPlans: PricePlan[] = data.map((item: any) => ({
           id: item.id,
-          title_id: item.title_id || item.price,
-          title_en: item.title_en || item.price,
+          title_id: item.title_id || item.price || '',
+          title_en: item.title_en || item.price || '',
           amount: item.amount,
           original_amount: item.original_amount || '',
           discount_percentage: item.discount_percentage || '',
@@ -51,8 +60,9 @@ export const AdminPriceManager: React.FC = () => {
         setPlans(formattedPlans);
         localStorage.setItem('visibel_price_plans', JSON.stringify(formattedPlans));
       }
-    } catch (err) {
-      console.warn('Using local price plans:', err);
+    } catch (err: any) {
+      console.warn('Supabase fetch note:', err?.message || err);
+      setDbConnected(false);
     } finally {
       setLoading(false);
     }
@@ -119,13 +129,16 @@ export const AdminPriceManager: React.FC = () => {
 
     try {
       await supabase.from('price_plans').delete().eq('id', id);
+      setStatusMessage({ text: 'Paket berhasil dihapus dari Database.', type: 'success' });
     } catch (err) {
       console.error('Delete error:', err);
     }
   };
 
   const syncToSupabase = async (allPlans: PricePlan[], targetPlan?: PricePlan) => {
-    setStatusMessage('Menyimpan perubahan...');
+    setIsSyncing(true);
+    setStatusMessage({ text: 'Sedang menyinkronkan ke Database Supabase Cloud...', type: 'warning' });
+    
     try {
       const itemsToUpsert = targetPlan ? [targetPlan] : allPlans;
       
@@ -145,60 +158,178 @@ export const AdminPriceManager: React.FC = () => {
       const { error } = await supabase.from('price_plans').upsert(upsertPayload);
 
       if (error) {
-        console.warn('Supabase note:', error.message);
-        setStatusMessage('Tersimpan di Penyimpanan Lokal Website');
+        console.error('Supabase save error:', error);
+        setDbConnected(false);
+        setStatusMessage({
+          text: `⚠️ Gagal kirim ke Supabase (${error.message}). Hanya tersimpan di browser Anda. Klik "Setup Supabase" untuk solusinya.`,
+          type: 'error'
+        });
       } else {
-        setStatusMessage('Berhasil tersimpan ke Database Supabase & Website!');
+        setDbConnected(true);
+        setStatusMessage({
+          text: '✅ Berhasil tersimpan ke Supabase Database Cloud! Semua pengunjung website kini dapat melihat harga terbaru.',
+          type: 'success'
+        });
       }
     } catch (err: any) {
-      console.error('Sync error:', err);
-      setStatusMessage('Tersimpan di Penyimpanan Lokal Website');
+      console.error('Sync exception:', err);
+      setDbConnected(false);
+      setStatusMessage({
+        text: '⚠️ Hanya tersimpan di browser Anda (Tabel database belum siap). Klik "Setup Supabase" di atas.',
+        type: 'error'
+      });
     } finally {
-      setTimeout(() => setStatusMessage(null), 3500);
+      setIsSyncing(false);
+      setTimeout(() => {
+        setStatusMessage(null);
+      }, 7000);
     }
+  };
+
+  const sqlSetupScript = `-- 1. Buat Tabel price_plans jika belum ada
+CREATE TABLE IF NOT EXISTS public.price_plans (
+  id TEXT PRIMARY KEY,
+  title_id TEXT NOT NULL,
+  title_en TEXT NOT NULL,
+  amount TEXT NOT NULL,
+  original_amount TEXT,
+  discount_percentage TEXT,
+  features_id JSONB DEFAULT '[]'::jsonb,
+  features_en JSONB DEFAULT '[]'::jsonb,
+  recommended BOOLEAN DEFAULT false,
+  "order" INTEGER DEFAULT 1,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 2. Aktifkan Row Level Security
+ALTER TABLE public.price_plans ENABLE ROW LEVEL SECURITY;
+
+-- 3. Berikan izin baca & tulis kepada publik (Anon Key)
+DROP POLICY IF EXISTS "Allow public read-write on price_plans" ON public.price_plans;
+CREATE POLICY "Allow public read-write on price_plans" 
+ON public.price_plans 
+FOR ALL 
+TO public 
+USING (true) 
+WITH CHECK (true);`;
+
+  const copySqlToClipboard = () => {
+    navigator.clipboard.writeText(sqlSetupScript);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2500);
   };
 
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Top action header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white p-6 sm:p-8 rounded-[32px] border border-slate-200/80 shadow-sm">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-6 sm:p-8 rounded-[32px] border border-slate-200/80 shadow-sm">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-500 rounded-2xl flex items-center justify-center text-slate-900 shadow-md">
               <Tag size={24} />
             </div>
-            Pengaturan Price List
-          </h2>
-          <p className="text-slate-500 font-bold text-xs sm:text-sm mt-1">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                Pengaturan Price List
+              </h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                  dbConnected === true 
+                    ? 'bg-emerald-100 text-emerald-700' 
+                    : dbConnected === false 
+                    ? 'bg-amber-100 text-amber-800' 
+                    : 'bg-slate-100 text-slate-600'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${
+                    dbConnected === true ? 'bg-emerald-500 animate-pulse' : dbConnected === false ? 'bg-amber-500' : 'bg-slate-400'
+                  }`} />
+                  {dbConnected === true 
+                    ? 'Cloud Supabase Terhubung' 
+                    : dbConnected === false 
+                    ? 'Penyimpanan Lokal (Belum Terhubung Cloud)' 
+                    : 'Mengecek Database...'}
+                </span>
+              </div>
+            </div>
+          </div>
+          <p className="text-slate-500 font-bold text-xs sm:text-sm mt-2">
             Ubah harga, tambah harga coret, persentase diskon, dan rincian paket di sini.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={handleAddNewPlan}
-            className="bg-yellow-500 hover:bg-yellow-600 text-slate-900 px-5 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all active:scale-95"
+            onClick={() => setIsSqlModalOpen(true)}
+            className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all border border-slate-300"
+            title="Setup tabel database Supabase"
           >
-            <Plus size={18} /> Tambah Paket Baru
+            <Database size={15} className="text-yellow-600" /> Setup Supabase
           </button>
+
+          <button
+            onClick={() => syncToSupabase(plans)}
+            disabled={isSyncing}
+            className="bg-slate-900 hover:bg-slate-800 text-yellow-400 px-4 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all active:scale-95 disabled:opacity-50"
+            title="Kirim semua paket ke database cloud"
+          >
+            <RefreshCw size={15} className={isSyncing ? 'animate-spin' : ''} />
+            {isSyncing ? 'Menyinkronkan...' : 'Sinkronkan ke Cloud'}
+          </button>
+
+          <button
+            onClick={handleAddNewPlan}
+            className="bg-yellow-500 hover:bg-yellow-600 text-slate-900 px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all active:scale-95"
+          >
+            <Plus size={18} /> Tambah Paket
+          </button>
+          
           <button
             onClick={handleResetToDefault}
-            className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
+            className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all"
             title="Reset ke harga standar"
           >
-            <RefreshCw size={14} /> Reset Default
+            <RefreshCw size={13} /> Reset
           </button>
         </div>
       </div>
 
+      {/* Database Setup Warning Banner if not connected */}
+      {dbConnected === false && (
+        <div className="bg-amber-50 border-2 border-amber-300 rounded-3xl p-5 sm:p-6 text-amber-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3.5">
+            <div className="p-2.5 bg-amber-200 text-amber-900 rounded-2xl flex-shrink-0 mt-0.5">
+              <AlertCircle size={22} />
+            </div>
+            <div>
+              <h4 className="font-black text-sm sm:text-base">Kenapa perubahan harga belum muncul di orang lain?</h4>
+              <p className="text-xs sm:text-sm text-amber-800 font-medium mt-0.5">
+                Tabel <code className="bg-amber-200/70 px-1.5 py-0.5 rounded font-mono font-bold">price_plans</code> di database Supabase Cloud Anda belum dibuat, sehingga data saat ini hanya tersimpan di browser Anda sendiri.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsSqlModalOpen(true)}
+            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-black text-xs uppercase tracking-wider px-5 py-3 rounded-xl flex items-center gap-2 flex-shrink-0 shadow transition-all active:scale-95"
+          >
+            <Database size={15} /> Buat Tabel di Supabase (1 Menit)
+          </button>
+        </div>
+      )}
+
       {/* Save Notification Toast */}
       {statusMessage && (
-        <div className="bg-slate-900 text-yellow-400 p-4 rounded-2xl font-bold text-sm flex items-center justify-between shadow-xl border border-yellow-500/30 animate-fade-in">
-          <div className="flex items-center gap-2">
-            <Sparkles size={18} />
-            <span>{statusMessage}</span>
+        <div className={`p-4 rounded-2xl font-bold text-sm flex items-center justify-between shadow-xl border animate-fade-in ${
+          statusMessage.type === 'success' 
+            ? 'bg-slate-900 text-emerald-400 border-emerald-500/40' 
+            : statusMessage.type === 'error'
+            ? 'bg-slate-900 text-red-400 border-red-500/40'
+            : 'bg-slate-900 text-yellow-400 border-yellow-500/40'
+        }`}>
+          <div className="flex items-center gap-2.5">
+            {statusMessage.type === 'success' ? <CheckCircle2 size={18} /> : <Sparkles size={18} />}
+            <span>{statusMessage.text}</span>
           </div>
-          <button onClick={() => setStatusMessage(null)} className="text-slate-400 hover:text-white">
+          <button onClick={() => setStatusMessage(null)} className="text-slate-400 hover:text-white p-1">
             <X size={16} />
           </button>
         </div>
@@ -276,6 +407,79 @@ export const AdminPriceManager: React.FC = () => {
           );
         })}
       </div>
+
+      {/* MODAL SETUP SUPABASE SQL */}
+      {isSqlModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white w-full max-w-2xl my-8 p-6 sm:p-8 rounded-[36px] shadow-2xl border border-slate-100 relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setIsSqlModalOpen(false)}
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-900 p-2 rounded-full hover:bg-slate-100 transition-all"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-emerald-500 text-white rounded-2xl flex items-center justify-center font-black shadow-md">
+                <Database size={24} />
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-slate-900">Setup Database Supabase</h3>
+                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                  Agar update harga otomatis muncul di semua pengunjung
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4 text-xs sm:text-sm text-slate-600">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                <p className="font-bold text-slate-900">Cara mudah menghubungkan (hanya 3 langkah):</p>
+                <ol className="list-decimal list-inside space-y-1.5 font-medium text-slate-700">
+                  <li>Buka dashboard Supabase Anda di browser (<a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="text-emerald-600 font-bold underline inline-flex items-center gap-1">supabase.com <ExternalLink size={12} /></a>).</li>
+                  <li>Pilih menu <b>SQL Editor</b> di menu samping kiri.</li>
+                  <li>Tempelkan (Paste) script SQL di bawah ini, lalu klik tombol <b>Run</b> (Jalankan).</li>
+                </ol>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-bold text-slate-800 text-xs uppercase tracking-wider">Script SQL:</span>
+                  <button
+                    onClick={copySqlToClipboard}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
+                  >
+                    {copiedSql ? <Check size={14} /> : <Copy size={14} />}
+                    {copiedSql ? 'Tersalin!' : 'Salin Script SQL'}
+                  </button>
+                </div>
+                <pre className="bg-slate-900 text-emerald-400 p-4 rounded-2xl font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800 select-all">
+                  {sqlSetupScript}
+                </pre>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsSqlModalOpen(false)}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+                >
+                  Tutup
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSqlModalOpen(false);
+                    syncToSupabase(plans);
+                  }}
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all"
+                >
+                  <RefreshCw size={14} /> Cek & Sinkronkan Sekarang
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MODAL FOR EDITING PRICE PLAN */}
       {isModalOpen && editingPlan && (
