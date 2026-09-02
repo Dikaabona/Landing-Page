@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, PenTool, Send, Image as ImageIcon, AlignLeft, Edit, Trash2, Plus, ArrowLeft, Tag } from 'lucide-react';
+import { ShieldCheck, Mail, PenTool, Send, Image as ImageIcon, AlignLeft, Edit, Trash2, Plus, ArrowLeft, Tag, LogOut, AlertCircle } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { supabase } from '../lib/supabase';
 import { convertDriveUrl, cleanArticleHtml } from '../lib/utils';
-import { useAdmin } from './AdminContext';
+import { useAdmin, AUTHORIZED_ADMIN_EMAIL } from './AdminContext';
 import { AdminPriceManager } from './AdminPriceManager';
 
 const AdminArticle: React.FC = () => {
-  const { isAdmin, loginAdmin } = useAdmin();
-  const [password, setPassword] = useState('');
+  const { isAdmin, adminEmail, loginAdmin, logoutAdmin } = useAdmin();
+  const [emailInput, setEmailInput] = useState('');
   const [activeTab, setActiveTab] = useState<'articles' | 'prices'>('articles');
   const [view, setView] = useState<'list' | 'form'>('list');
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -127,11 +127,11 @@ const AdminArticle: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginAdmin(password)) {
+    if (loginAdmin(emailInput)) {
       setError('');
       fetchArticles();
     } else {
-      setError('Password salah!');
+      setError('Akses ditolak! Email ini tidak memiliki izin akses administrator.');
     }
   };
 
@@ -242,34 +242,60 @@ const AdminArticle: React.FC = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 pt-24 px-4">
-        <div className="bg-white p-10 rounded-[32px] shadow-2xl w-full max-w-md border border-slate-100">
-          <div className="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-600 mb-8 mx-auto">
-            <Lock size={32} />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 pt-24 px-4 pb-12">
+        <div className="bg-white p-8 sm:p-10 rounded-[32px] shadow-2xl w-full max-w-md border border-slate-100">
+          <div className="w-16 h-16 bg-yellow-500 text-slate-900 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-md">
+            <ShieldCheck size={32} />
           </div>
-          <h2 className="text-2xl font-black text-center mb-2 text-slate-900">Admin Area</h2>
-          <p className="text-center text-slate-400 text-sm mb-8 font-bold uppercase tracking-widest">Hanya untuk internal Visibel</p>
+          <h2 className="text-2xl font-black text-center mb-1 text-slate-900">Admin Area Visibel</h2>
+          <p className="text-center text-slate-400 text-xs mb-8 font-bold uppercase tracking-widest">
+            Verifikasi Otorisasi Email
+          </p>
           
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-widest">Akses Kode</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-widest flex items-center gap-1.5">
+                <Mail size={14} className="text-yellow-600" />
+                Alamat Email Administrator
+              </label>
               <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-yellow-500 focus:bg-white outline-none transition-all font-bold"
-                placeholder="Masukkan kode..."
+                type="email" 
+                required
+                value={emailInput}
+                onChange={(e) => {
+                  setEmailInput(e.target.value);
+                  if (error) setError('');
+                }}
+                className="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-200 focus:border-yellow-500 focus:bg-white outline-none transition-all font-bold text-sm text-slate-900"
+                placeholder="masukkan email admin..."
+                autoFocus
               />
             </div>
-            {error && <p className="text-red-500 text-center text-sm font-bold">{error}</p>}
+            
+            {error && (
+              <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-2.5 text-red-600 text-xs font-bold">
+                <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
+
             <button 
               type="submit" 
-              className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black hover:bg-slate-800 transition-all uppercase tracking-widest text-sm"
+              className="w-full bg-slate-900 hover:bg-slate-800 text-yellow-400 py-4.5 rounded-2xl font-black transition-all uppercase tracking-widest text-xs shadow-lg active:scale-95 flex items-center justify-center gap-2"
             >
-              Masuk
+              <ShieldCheck size={16} /> Verifikasi & Masuk
             </button>
           </form>
-          <p className="mt-8 text-center text-slate-300 text-[10px] font-bold">PASSWORD DEFAULT: visibel-admin</p>
+
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="text-xs font-bold text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5 transition-colors"
+            >
+              <ArrowLeft size={13} /> Kembali ke Halaman Utama
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -280,11 +306,11 @@ const AdminArticle: React.FC = () => {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation Tabs Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-3 sm:p-4 rounded-3xl border border-slate-200/80 shadow-sm mb-8 gap-4">
-          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl w-full sm:w-auto">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-white p-3 sm:p-4 rounded-3xl border border-slate-200/80 shadow-sm mb-8 gap-4">
+          <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl w-full sm:w-auto overflow-x-auto">
             <button
               onClick={() => { setActiveTab('articles'); setView('list'); }}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all whitespace-nowrap ${
                 activeTab === 'articles'
                   ? 'bg-slate-900 text-yellow-400 shadow-md'
                   : 'text-slate-600 hover:text-slate-900'
@@ -294,7 +320,7 @@ const AdminArticle: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('prices')}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all whitespace-nowrap ${
                 activeTab === 'prices'
                   ? 'bg-slate-900 text-yellow-400 shadow-md'
                   : 'text-slate-600 hover:text-slate-900'
@@ -304,12 +330,28 @@ const AdminArticle: React.FC = () => {
             </button>
           </div>
 
-          <button
-            onClick={() => navigate('/')}
-            className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-2 bg-slate-50 hover:bg-slate-100 px-4 py-2.5 rounded-xl border border-slate-200 transition-colors w-full sm:w-auto justify-center"
-          >
-            <ArrowLeft size={14} className="text-yellow-600" /> Lihat Website
-          </button>
+          {/* Admin User Info & Actions */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 bg-yellow-50 text-yellow-900 px-3.5 py-2 rounded-xl border border-yellow-200 text-xs font-bold">
+              <ShieldCheck size={14} className="text-yellow-600" />
+              <span className="truncate max-w-[200px]">{adminEmail || AUTHORIZED_ADMIN_EMAIL}</span>
+            </div>
+
+            <button
+              onClick={() => navigate('/')}
+              className="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 px-3.5 py-2.5 rounded-xl border border-slate-200 transition-colors"
+            >
+              <ArrowLeft size={14} className="text-yellow-600" /> Website
+            </button>
+
+            <button
+              onClick={logoutAdmin}
+              className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1.5 bg-red-50 hover:bg-red-100 px-3.5 py-2.5 rounded-xl border border-red-200 transition-colors"
+              title="Keluar dari mode admin"
+            >
+              <LogOut size={14} /> Keluar
+            </button>
+          </div>
         </div>
 
         {activeTab === 'prices' ? (
